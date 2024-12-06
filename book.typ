@@ -4,13 +4,18 @@
 #show: book
 
 #book-meta(
-  title: "shiroa",
+  title: "Da1sypetals Bookly Blog",
+  authors: ("Da1sypetals",),
   summary: [
-    = Hello world
+    = Da1sypetals Bookly Blog
+
+    - #chapter("content/xmm/xmm.typ")[XMM]
+    - #chapter("content/CG/cg.typ")[Conjugate Gradient Method]
+
+
+    = Sample Pages
     - #chapter("content/Sample/sample-page.typ")[Sample Page]
       - #chapter("content/Sample/subchapter.typ")[Subchapter]
-    - #chapter("content/CG/cg.typ")[Conjugate Gradient Method]
-    - #chapter("content/xmm/xmm.typ")[XMM]
   ]
 )
 

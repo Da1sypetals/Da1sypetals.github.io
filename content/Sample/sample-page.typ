@@ -9,6 +9,6 @@
 
 = Hello, typst
 
-== Sample Chapter
+== Sample subtitle
 
 #lorem(100)
