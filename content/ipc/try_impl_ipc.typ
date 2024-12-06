@@ -39,7 +39,7 @@ deep learning采取梯度下降法（及其变种），但是graphics里经过�
 
 好在incremental potential的每一个组分大多是 ($k n$个dof）的函数，其中n是维度数（我实现的是2），k是一个最多几十的数字。所以对每一个组成大IP的小IP，其Hessian的项数也就数十到数百，可以用稀疏存储的方式，然后组装成整体的hessian。
 
-参考（[https://zhuanlan.zhihu.com/p/444105016](https://zhuanlan.zhihu.com/p/444105016)），实现了一个顶点挂在墙上的springs。
+参考#link("https://zhuanlan.zhihu.com/p/444105016", "教程")，实现了一个顶点挂在墙上的springs。
 
 + *选包。*
     - 选取macroquad做GUI；
