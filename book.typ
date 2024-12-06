@@ -4,11 +4,17 @@
 #show: book
 
 #book-meta(
-  title: "Da1sypetals Bookly Blog",
+  title: "Da1sypetals' Bookly Blog",
   authors: ("Da1sypetals",),
   summary: [
-    = Da1sypetals Bookly Blog
+    = Da1sypetals' Bookly Blog
+    = Welcome!
+    - #chapter("content/welcome.typ")[This is Da1sypetals!]
 
+
+    = Articles
+
+    - #chapter("content/ipc/try_impl.typ")[Try to implement IPC]
     - #chapter("content/xmm/xmm.typ")[XMM]
     - #chapter("content/CG/cg.typ")[Conjugate Gradient Method]
 

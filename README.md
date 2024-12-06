@@ -1,4 +1,4 @@
 # Note on publishing
 
-- Run `bash check.sh`
+- Run `bash pre-push.sh`
 - Run `shiroa build`
