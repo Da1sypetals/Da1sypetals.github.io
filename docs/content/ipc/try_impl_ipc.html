@@ -10,8 +10,31 @@
     <!-- Custom HTML head -->
     
     <meta name="description" content="#
-1.Conjugate Gradient
-">
+Try to implement IPC
+最近尝试入门rust，就想找点代码写一写。
+大部分人写的第一个应用应该都是某种后端服务（把前端发来的http请求，转化为对数据库的CRUD之类的操作，然后返回给前端）。
+但是我并没有学过后端服务怎么写（最近想学，如果有比较好的零基础入门资料可以推荐一下），然后就只好捡起最近手边研究的这两篇论文拿来复现一下：
+1.
+IPC
+
+
+2.
+C-IPC
+
+
+3.
+ABD
+
+注：本文仅复现/讨论IPC族算法，不关心&amp;amp;不讨论任何性能优化/该算法效率是否高/为什么不用xx算法的问题。
+项目地址：Github
+#
+1.Implicit euler
+物理模拟其实是一个数值积分过程。
+显式积分会爆炸，但是隐式积分又存在“鸡生蛋蛋生鸡”（计算下一秒的位置，需要用到下一秒的速度）的问题，无法显式求解，需要求解一个（可能非凸的）优化问题。
+有什么可以是隐式积分？Mass-spring system就可以是隐式积分。但是其实我至今都没写过一个Optimization-based的隐式积分，所以先尝试搓一个mass-spring system。
+#
+1.1.What is it?
+Implici">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff" />
 
@@ -151,7 +174,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">Da1sypetals' Bookly Blog</li><li class="chapter-item expanded affix "><li class="part-title">Welcome!</li><li class="chapter-item expanded "><a href="/content/welcome.html"><strong aria-hidden="true">1.</strong> This is Da1sypetals!</a></li><li class="chapter-item expanded affix "><li class="part-title">Articles</li><li class="chapter-item expanded "><a href="/content/ipc/try_impl_ipc.html"><strong aria-hidden="true">2.</strong> Try to implement IPC</a></li><li class="chapter-item expanded "><a href="/content/xmm/xmm.html"><strong aria-hidden="true">3.</strong> XMM</a></li><li class="chapter-item expanded "><a href="/content/CG/cg.html" class="active"><strong aria-hidden="true">4.</strong> Conjugate Gradient Method</a></li><li class="chapter-item expanded affix "><li class="part-title">Sample Pages</li><li class="chapter-item expanded "><a href="/content/Sample/sample-page.html"><strong aria-hidden="true">5.</strong> Sample Page</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="/content/Sample/subchapter.html"><strong aria-hidden="true">5.1.</strong> Subchapter</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">Da1sypetals' Bookly Blog</li><li class="chapter-item expanded affix "><li class="part-title">Welcome!</li><li class="chapter-item expanded "><a href="/content/welcome.html"><strong aria-hidden="true">1.</strong> This is Da1sypetals!</a></li><li class="chapter-item expanded affix "><li class="part-title">Articles</li><li class="chapter-item expanded "><a href="/content/ipc/try_impl_ipc.html" class="active"><strong aria-hidden="true">2.</strong> Try to implement IPC</a></li><li class="chapter-item expanded "><a href="/content/xmm/xmm.html"><strong aria-hidden="true">3.</strong> XMM</a></li><li class="chapter-item expanded "><a href="/content/CG/cg.html"><strong aria-hidden="true">4.</strong> Conjugate Gradient Method</a></li><li class="chapter-item expanded affix "><li class="part-title">Sample Pages</li><li class="chapter-item expanded "><a href="/content/Sample/sample-page.html"><strong aria-hidden="true">5.</strong> Sample Page</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="/content/Sample/subchapter.html"><strong aria-hidden="true">5.1.</strong> Subchapter</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -224,7 +247,7 @@
                         <script>
     let appContainer = document.currentScript && document.currentScript.parentElement;
     window.typstRenderModuleReady.then((plugin) => {
-        window.typstBookRenderPage(plugin, "/content/CG/cg", appContainer);
+        window.typstBookRenderPage(plugin, "/content/ipc/try_impl_ipc", appContainer);
     });
 </script>
                     </main>

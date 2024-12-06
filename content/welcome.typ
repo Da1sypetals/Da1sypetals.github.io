@@ -2,7 +2,7 @@
 #show: book-page.with(title: "This is Da1sypetals!")
 #set par(justify: true, leading: 1em)
 // #set heading(numbering: "1.")
-#set text( font: ( "Libertinus Serif"),  size: 18pt, top-edge: 0.7em, bottom-edge: -0.3em)
+#set text( font: ( "Libertinus Serif", "Source Han Serif SC"),  size: 16pt, top-edge: 0.7em, bottom-edge: -0.3em)
 
 // ################### Content ###################
 
@@ -12,6 +12,10 @@
 
 - #link("https://github.com/Da1sypetals", "My Github")
 - #link("https://www.yuque.com/da1sypetals/public", "语雀主页")
+- 喜欢音乐：
+  - 喜欢唱歌！
+  - *只*喜欢古风歌！
+    - 是代表歌手为*黄诗扶、小曲儿、河图、Winky诗、贰婶，银临、HITA、银临*的这个古风！不要找错啦 ♡
 
 == Fun projects
 

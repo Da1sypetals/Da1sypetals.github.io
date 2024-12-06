@@ -4,7 +4,7 @@
  
 #set par(justify: true, leading: 1em)
 #set heading(numbering: "1.")
-#set text( font: ( "Libertinus Serif"),  size: 18pt, top-edge: 0.7em, bottom-edge: -0.3em)
+#set text( font: ( "Libertinus Serif", "Source Han Serif SC"),  size: 16pt, top-edge: 0.7em, bottom-edge: -0.3em)
 
 
 #heading(numbering: none)[Try to implement IPC]
@@ -92,7 +92,7 @@ repeat until 足够接近极小值，视为优化完成。
         - Note: 后来我自己做了一个生成SymPy->rust的代码生成器，
             - #link("https://github.com/Da1sypetals/Symars", "Symars: Generate Rust code from SymPy expressions")
 + 记得点到线段距离要分类讨论。
-+ccd（accd）需要被集成到优化过程中，所以argmin不好使了，把argmin丢了，手写了 damped newton solver with ACCD and armijo condition.
++ ccd（accd）需要被集成到优化过程中，所以argmin不好使了，把argmin丢了，手写了 damped newton solver with ACCD and armijo condition.
 
 
 
