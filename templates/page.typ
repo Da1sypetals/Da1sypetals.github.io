@@ -20,13 +20,11 @@
 
 // Fonts
 #let main-font = (
-  "Charter",
+  "Libertinus Serif", 
   "Source Han Serif SC",
-  // "Source Han Serif TC",
-  // shiroa's embedded font
-  "Libertinus Serif",
 )
 #let code-font = (
+  "JetBrains Mono",
   "BlexMono Nerd Font Mono",
   // shiroa's embedded font
   "DejaVu Sans Mono",
@@ -76,12 +74,14 @@
   ) if is-web-target
 
   // Set main text
-  set text(
+  set text( 
     font: main-font,
-    size: main-size,
+    size: 16pt, 
+    top-edge: 0.7em, 
+    bottom-edge: -0.3em,
     fill: main-color,
     lang: "en",
-  )
+    )
 
   // Set main spacing
   set enum(
@@ -92,7 +92,7 @@
     indent: list-indent * 0.618,
     body-indent: list-indent,
   )
-  set par(leading: 0.7em)
+  set par(justify: true, leading: 1em)
   set block(spacing: 0.7em * 1.5)
 
   // Set text, spacing for headings

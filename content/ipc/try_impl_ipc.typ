@@ -1,15 +1,11 @@
 
 #import "/book.typ": book-page
 #show: book-page.with(title: "Sample Page")
- 
-#set par(justify: true, leading: 1em)
-#set heading(numbering: "1.")
-#set text( font: ( "Libertinus Serif", "Source Han Serif SC"),  size: 16pt, top-edge: 0.7em, bottom-edge: -0.3em)
 
 
 #heading(numbering: none)[Try to implement IPC]
 
-最近尝试入门rust，就想找点代码写一写。
+最近尝试入门Rust，就想找点代码写一写。
 
 大部分人写的第一个应用应该都是某种后端服务（把前端发来的http请求，转化为对数据库的CRUD之类的操作，然后返回给前端）。
 

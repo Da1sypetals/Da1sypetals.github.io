@@ -11,16 +11,16 @@
     
     <meta name="description" content="We Introduce the xmm operator in this post. Implementation: XMM implementation
 #
-1.Formulation
+Formulation
 xmm generalizes the matrix multiplication operation to a customizable form:
 𝑍&#x3D;Ω{𝜎,𝜇}(𝐴1,…,𝐴𝑁𝑎,𝐵1,…,𝐵𝑁𝑏)
 𝑍(𝑖,𝑗)≝𝜎𝑘{𝜇(𝐴1(𝑖,𝑘),…,𝐴𝑁𝑎(𝑖,𝑘),𝐵1(𝑘,𝑗),𝐵𝑁𝑏(𝑘,𝑗))}
 
 where operation Ω is parameterized by two functions, 𝜇 the combinator, and 𝜎 the reductor.
 #
-2.Relations to Neural Networks
+Relations to Neural Networks
 #
-2.1.Linear Layer (Matrix Multiplication)
+Linear Layer (Matrix Multiplication)
 matmul is a special case of xmm where
 •
 𝜎&#x3D;∑,
@@ -34,7 +34,8 @@ matmul is a special case of xmm where
 𝑁𝑎&#x3D;𝑁𝑏&#x3D;1.
 
 #
-2.2.Kolmogrov Arnol">
+Kolmogrov Arnold Layer
+KAN-">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff" />
 
