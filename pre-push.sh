@@ -18,6 +18,7 @@ function find_large_files() {
     # Check if the file exists and its size
     if [[ -f "$file" ]]; then
       filesize=$(stat -c%s "$file")
+      # threshold: 2 MB
       if (( filesize > 2097152 )); then
         echo "Large file found: $file (Size: $((filesize / 1024 / 1024)) MB)"
         ((large_file_count++))

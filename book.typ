@@ -15,8 +15,8 @@
     = Articles
 
     - #chapter("content/ipc/try_impl_ipc.typ")[Try to implement IPC]
-    - #chapter("content/xmm/xmm.typ")[XMM]
     - #chapter("content/CG/cg.typ")[Conjugate Gradient Method]
+    - #chapter("content/xmm/xmm.typ")[XMM]
 
 
     = Sample Pages

@@ -11,6 +11,7 @@
     
     <meta name="description" content="#
 Conjugate Gradient
+注意，本文没有任何数学推导。我们从直观上理解这个算法，然后直接介绍算法的流程。希望了解数学推导的读者可以查看CMU的教案及其翻译。
 #
 1.问题
 𝐴𝑥&#x3D;𝑏
@@ -19,7 +20,7 @@ Conjugate Gradient
 argmin𝑥𝑓(𝑥)
 
 其中
-𝑓(𝑥)&#x3D;12𝑥𝑇𝐴𝑥−𝑏𝑥
+𝑓(𝑥)&#x3D;12𝑥𝑇𝐴𝑥−𝑏𝑇𝑥
 
 #
 2.预备知识
@@ -30,7 +31,7 @@ argmin𝑥𝑓(𝑥)
 
 如果你记性好的话，你应该记得这个二级结论：
 
-这是一个从圆里面推广而来的结论；如果𝑎&#x3D;𝑏，椭圆退化为圆，𝑘𝑃𝐴𝑘𝑃𝐵&#x3D;−1，即𝑃𝐴,𝑃𝐵 两条直线垂直。
+这是一个从圆里面推广而来的结论；如果𝑎&#x3D;𝑏，椭圆退化为圆，𝑘𝑂𝑀𝑘𝑙&#x3D;−1，即 𝑂𝑀,𝑙 两条直线垂直。
 #
 2.2.最速下降法
 首先，你应该知道梯度下降法：
@@ -49,17 +50,13 @@ argmin𝑥𝑓(𝑥)
 
 •
 𝑟𝑖：𝑏𝑖−𝐴𝑥𝑖 ，目标函数𝑓(𝑥)在𝑥𝑖点的负梯度，或者线性方程组在𝑥𝑖点的残差。
+‣
+请记住 负梯度和残差是一个东西！
+
 
 
 •
-𝑑𝑖：在 𝑥𝑖 点的搜索方向。最速下降算法里𝑑𝑖&#x3D; 𝑟𝑖，共轭梯度里面需要一点修正。
-
-#
-3.2.最速下降
-1.
-最速下降的新方向：𝑟𝑖+1
-•
-新方向与前一步下降方向 𝑟𝑖 垂直（画个等高线图">
+𝑑𝑖：在 𝑥𝑖 点的搜索">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff" />
 
@@ -199,7 +196,7 @@ argmin𝑥𝑓(𝑥)
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">Da1sypetals' Bookly Blog</li><li class="chapter-item expanded affix "><li class="part-title">Welcome!</li><li class="chapter-item expanded "><a href="/content/welcome.html"><strong aria-hidden="true">1.</strong> This is Da1sypetals!</a></li><li class="chapter-item expanded affix "><li class="part-title">Articles</li><li class="chapter-item expanded "><a href="/content/ipc/try_impl_ipc.html"><strong aria-hidden="true">2.</strong> Try to implement IPC</a></li><li class="chapter-item expanded "><a href="/content/xmm/xmm.html"><strong aria-hidden="true">3.</strong> XMM</a></li><li class="chapter-item expanded "><a href="/content/CG/cg.html" class="active"><strong aria-hidden="true">4.</strong> Conjugate Gradient Method</a></li><li class="chapter-item expanded affix "><li class="part-title">Sample Pages</li><li class="chapter-item expanded "><a href="/content/Sample/sample-page.html"><strong aria-hidden="true">5.</strong> Sample Page</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="/content/Sample/subchapter.html"><strong aria-hidden="true">5.1.</strong> Subchapter</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">Da1sypetals' Bookly Blog</li><li class="chapter-item expanded affix "><li class="part-title">Welcome!</li><li class="chapter-item expanded "><a href="/content/welcome.html"><strong aria-hidden="true">1.</strong> This is Da1sypetals!</a></li><li class="chapter-item expanded affix "><li class="part-title">Articles</li><li class="chapter-item expanded "><a href="/content/ipc/try_impl_ipc.html"><strong aria-hidden="true">2.</strong> Try to implement IPC</a></li><li class="chapter-item expanded "><a href="/content/CG/cg.html" class="active"><strong aria-hidden="true">3.</strong> Conjugate Gradient Method</a></li><li class="chapter-item expanded "><a href="/content/xmm/xmm.html"><strong aria-hidden="true">4.</strong> XMM</a></li><li class="chapter-item expanded affix "><li class="part-title">Sample Pages</li><li class="chapter-item expanded "><a href="/content/Sample/sample-page.html"><strong aria-hidden="true">5.</strong> Sample Page</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="/content/Sample/subchapter.html"><strong aria-hidden="true">5.1.</strong> Subchapter</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
