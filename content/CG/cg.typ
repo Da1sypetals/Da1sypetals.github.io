@@ -1,6 +1,7 @@
 #import "/book.typ": book-page
 #show: book-page.with(title: "XMM")
 
+_2024.12.7_
 = Conjugate Gradient
 
 #set heading(numbering: "1.")
@@ -36,11 +37,11 @@ $
 == 最速下降法
 首先，你应该知道梯度下降法：
 $
-  x_(i+1)=x_i+-alpha nabla f(x_i)
+  x_(i+1)=x_i-alpha nabla f(x_i)
 $
 最速下降法就是在梯度下降法的基础上，选择$alpha$使得$x_(i+1)$达到最小（在搜索方向上的最小值）：
 $
-  alpha^*= limits("argmin")_alpha f(x_i+-alpha nabla f(x_i))
+  alpha^*= limits("argmin")_alpha f(x_i-alpha nabla f(x_i))
 $
 
 = 共轭梯度法

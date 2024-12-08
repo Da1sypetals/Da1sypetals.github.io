@@ -6,7 +6,10 @@
 
 // ################### Content ###################
 
-We Introduce the `xmm` operator in this post. Implementation: #link("https://github.com/Da1sypetals/XMM-prototype", "XMM implementation")
+_2024.7.4_
+
+
+*Abstract*: We Introduce the `xmm` operator in this post. Implementation: #link("https://github.com/Da1sypetals/XMM-prototype", "XMM implementation")
 
 = Formulation
 

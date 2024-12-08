@@ -3,16 +3,13 @@
 
 // ################### Content ###################
 
-= Welcome to Da1sypetals' Bookly Blog!
+= Welcome to Da1sypetals' Bookblog!
 
-== About me:
+== Pages
 
 - #link("https://github.com/Da1sypetals", "My Github")
 - #link("https://www.yuque.com/da1sypetals/public", "语雀主页")
-- 喜欢音乐：
-  - 喜欢唱歌！
-  - *只*喜欢古风歌！
-    - 是代表歌手为*黄诗扶、小曲儿、河图、Winky诗、贰婶，银临、HITA*的这个古风！不要找错啦 ♡
+
 
 == Fun projects
 
@@ -24,3 +21,13 @@
   - #link("https://github.com/Da1sypetals/cuda-Wavelet-KAN", "Implementation of a variant of xmm")
 - #link("https://github.com/Da1sypetals/kv-store", "A simple KV-store implementation")
 
+== About Me
+
+- 喜欢音乐：
+  - 喜欢唱歌！
+  - *只*喜欢古风歌！
+    - 是代表歌手为*黄诗扶、小曲儿、河图、Winky诗、贰婶，银临、HITA*的这个古风！不要找错啦 ♡
+
+== Contact 
+=== Email
+`da1sypetals.iota@gmail.com`

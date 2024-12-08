@@ -4,22 +4,25 @@
 #show: book
 
 #book-meta(
-  title: "Da1sypetals' Bookly Blog",
+  title: "Da1sypetals' Bookblog",
   authors: ("Da1sypetals",),
   summary: [
-    = Da1sypetals' Bookly Blog
-    = Welcome!
+    = Da1sypetals' Bookblog
+    = #emoji.bread Welcome!
     - #chapter("content/welcome.typ")[This is Da1sypetals!]
 
 
-    = Articles
+    = #emoji.book Articles
 
     - #chapter("content/ipc/try_impl_ipc.typ")[Try to implement IPC]
     - #chapter("content/CG/cg.typ")[Conjugate Gradient Method]
     - #chapter("content/xmm/xmm.typ")[XMM]
 
+    = #emoji.notes Fun
+    - #chapter("content/me/songs.typ")[Songs]
 
-    = Sample Pages
+
+    = #emoji.construction Sample Pages
     - #chapter("content/Sample/sample-page.typ")[Sample Page]
       - #chapter("content/Sample/subchapter.typ")[Subchapter]
   ]

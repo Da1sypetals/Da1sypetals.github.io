@@ -2,9 +2,9 @@
 #import "/book.typ": book-page
 #show: book-page.with(title: "Sample Page")
 
+_2024.9.6_
 
 #heading(numbering: none)[Try to implement IPC]
-
 最近尝试入门Rust，就想找点代码写一写。
 
 大部分人写的第一个应用应该都是某种后端服务（把前端发来的http请求，转化为对数据库的CRUD之类的操作，然后返回给前端）。
