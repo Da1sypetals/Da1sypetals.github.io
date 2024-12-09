@@ -94,5 +94,9 @@ $
   故可以用上式计算 $r_(i+1)$，而不必用 $b-A x_(i+1)$.
 + 上述方法有浮点误差累计的危险，因此我们应该每过几个循环就重新用 $r_i=b-A x_i$ 重新计算残差。
 
-= Preprocessor
-TODO
+= Preconditioning
+
+- MAS preconditioner @mas
+
+
+#bibliography("cg.bib", title: "References")

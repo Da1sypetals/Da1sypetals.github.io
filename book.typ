@@ -19,7 +19,7 @@
     - #chapter("content/xmm/xmm.typ")[XMM]
 
     = #emoji.notes Fun
-    - #chapter("content/me/songs.typ")[Songs]
+    - #chapter("content/fun/songs.typ")[Songs]
 
 
     = #emoji.construction Sample Pages
