@@ -18,6 +18,9 @@
     - #chapter("content/CG/cg.typ")[Conjugate Gradient Method]
     - #chapter("content/xmm/xmm.typ")[XMM]
 
+    = #emoji.wrench Utilities
+    - #chapter("content/archlinux/arch.typ")[Arch Linux Use Tips]
+
     = #emoji.notes Fun
     - #chapter("content/fun/songs.typ")[Songs]
 

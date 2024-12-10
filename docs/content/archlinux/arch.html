@@ -10,10 +10,33 @@
     <!-- Custom HTML head -->
     
     <meta name="description" content="#
-Hello, typst
+ArchLinux 小寄巧
+我不是玩系统高手，也没啥兴趣玩系统QAQ，因为组里的开发机器是ArchLinux所以来学学
 #
-Sample subtitle
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim aeque doleamus animo, cum corpore dolemus, fieri tamen permagna accessio potest, si aliquod aeternum et infinitum impendere malum nobis opinemur. Quod idem licet transferre in voluptatem, ut postea variari voluptas distinguique possit, augeri amplificarique non possit. At etiam Athenis, ut e patre audiebam facete et urbane S">
+1.我没有sudo权限，但是我需要装一个二进制（一个命令等）
+•
+https://archlinux.org/packages 搜索自己需要的包
+
+
+•
+然后在右边侧栏找到 Download From Mirror，下载一个含有binary的包
+
+
+•
+zstd -d &lt;package.tar.zst&gt;
+
+
+•
+tar -xvf &lt;package.tar&gt;
+
+
+•
+往里面找到自己想要的binary，cp 到一个在PATH的目录
+‣
+例如：~/bin
+
+
+">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff" />
 
@@ -153,7 +176,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">Da1sypetals' Bookblog</li><li class="chapter-item expanded affix "><li class="part-title">🍞 Welcome!</li><li class="chapter-item expanded "><a href="/content/welcome.html"><strong aria-hidden="true">1.</strong> This is Da1sypetals!</a></li><li class="chapter-item expanded affix "><li class="part-title">📕 Articles</li><li class="chapter-item expanded "><a href="/content/ipc/try_impl_ipc.html"><strong aria-hidden="true">2.</strong> Try to implement IPC</a></li><li class="chapter-item expanded "><a href="/content/CG/cg.html"><strong aria-hidden="true">3.</strong> Conjugate Gradient Method</a></li><li class="chapter-item expanded "><a href="/content/xmm/xmm.html"><strong aria-hidden="true">4.</strong> XMM</a></li><li class="chapter-item expanded affix "><li class="part-title">🔧 Utilities</li><li class="chapter-item expanded "><a href="/content/archlinux/arch.html"><strong aria-hidden="true">5.</strong> Arch Linux Use Tips</a></li><li class="chapter-item expanded affix "><li class="part-title">🎵 Fun</li><li class="chapter-item expanded "><a href="/content/fun/songs.html"><strong aria-hidden="true">6.</strong> Songs</a></li><li class="chapter-item expanded affix "><li class="part-title">🚧 Sample Pages</li><li class="chapter-item expanded "><a href="/content/Sample/sample-page.html" class="active"><strong aria-hidden="true">7.</strong> Sample Page</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="/content/Sample/subchapter.html"><strong aria-hidden="true">7.1.</strong> Subchapter</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">Da1sypetals' Bookblog</li><li class="chapter-item expanded affix "><li class="part-title">🍞 Welcome!</li><li class="chapter-item expanded "><a href="/content/welcome.html"><strong aria-hidden="true">1.</strong> This is Da1sypetals!</a></li><li class="chapter-item expanded affix "><li class="part-title">📕 Articles</li><li class="chapter-item expanded "><a href="/content/ipc/try_impl_ipc.html"><strong aria-hidden="true">2.</strong> Try to implement IPC</a></li><li class="chapter-item expanded "><a href="/content/CG/cg.html"><strong aria-hidden="true">3.</strong> Conjugate Gradient Method</a></li><li class="chapter-item expanded "><a href="/content/xmm/xmm.html"><strong aria-hidden="true">4.</strong> XMM</a></li><li class="chapter-item expanded affix "><li class="part-title">🔧 Utilities</li><li class="chapter-item expanded "><a href="/content/archlinux/arch.html" class="active"><strong aria-hidden="true">5.</strong> Arch Linux Use Tips</a></li><li class="chapter-item expanded affix "><li class="part-title">🎵 Fun</li><li class="chapter-item expanded "><a href="/content/fun/songs.html"><strong aria-hidden="true">6.</strong> Songs</a></li><li class="chapter-item expanded affix "><li class="part-title">🚧 Sample Pages</li><li class="chapter-item expanded "><a href="/content/Sample/sample-page.html"><strong aria-hidden="true">7.</strong> Sample Page</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="/content/Sample/subchapter.html"><strong aria-hidden="true">7.1.</strong> Subchapter</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -226,7 +249,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
                         <script>
     let appContainer = document.currentScript && document.currentScript.parentElement;
     window.typstRenderModuleReady.then((plugin) => {
-        window.typstBookRenderPage(plugin, "/content/Sample/sample-page", appContainer);
+        window.typstBookRenderPage(plugin, "/content/archlinux/arch", appContainer);
     });
 </script>
                     </main>
