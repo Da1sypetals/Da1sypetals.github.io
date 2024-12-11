@@ -106,7 +106,7 @@ repeat until 足够接近极小值，视为优化完成。
 + affine body同样也要实现contact。
     - 但是区别于一个顶点一个dof的mass-spring system，ab的顶点位置p是dof的函数，contact IP又是顶点位置p的函数。
     - 一个primitive pair有两个body参与，其中一个primitive pair贡献的是一条边（具有两个点p1,p2）。
-    - 于是需要对两个q求导。计算图如下：#image("../../assets/ipc/diff.jpg")
+    - 于是需要对两个q求导。计算图如下：#image("./assets/diff.jpg")
 
         
 

@@ -21,7 +21,7 @@
     = #emoji.wrench Utilities
     - #chapter("content/archlinux/arch.typ")[Arch Linux Use Tips]
 
-    = #emoji.notes Fun
+    = 🎼 Fun
     - #chapter("content/fun/songs.typ")[Songs]
 
 
