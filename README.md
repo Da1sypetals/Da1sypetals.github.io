@@ -1,3 +1,7 @@
+# Note on writing
+
+- Every post is a **separate** folder.
+
 # Note on publishing
 
 - Run `png2jpg.py` convert all .png files to .jpg files.

@@ -20,6 +20,10 @@
 
     = #emoji.wrench Utilities
     - #chapter("content/archlinux/arch.typ")[Arch Linux Use Tips]
+    - #chapter("content/rust-tips/rust.typ")[Rust Tips]
+      - #chapter("content/rust-tips/done-right.typ")[Done Right]
+      - #chapter("content/rust-tips/cargo-tips.typ")[Cargo Tips]
+
 
     = 🎼 Fun
     - #chapter("content/fun/songs.typ")[Songs]
