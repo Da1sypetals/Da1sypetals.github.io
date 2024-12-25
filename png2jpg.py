@@ -43,4 +43,3 @@ def convert_png_to_jpg(directory):
 if __name__ == "__main__":
     # Start conversion in the current directory
     convert_png_to_jpg(".")
-    print("Now you should Ctrl-Shift-F and replace all `.png` with `.jpg`.")

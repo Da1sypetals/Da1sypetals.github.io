@@ -18,6 +18,10 @@
     - #chapter("content/CG/cg.typ")[Conjugate Gradient Method]
     - #chapter("content/xmm/xmm.typ")[XMM]
 
+    - #chapter("content/xmm/xmm.typ")[Simulation]
+      - #chapter("content/simulation/math/main.typ")[Math & Impl]
+      - #chapter("content/simulation/TRfilter-PN/main.typ")[Paper: TRPN]
+
     = #emoji.wrench Utilities
     - #chapter("content/archlinux/arch.typ")[Arch Linux Use Tips]
     - #chapter("content/rust-tips/rust.typ")[Rust Tips]
