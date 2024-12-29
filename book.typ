@@ -17,6 +17,8 @@
     - #chapter("content/ipc/try_impl_ipc.typ")[Try to implement IPC]
     - #chapter("content/CG/cg.typ")[Conjugate Gradient Method]
     - #chapter("content/xmm/xmm.typ")[XMM]
+    - #chapter("content/raddy/raddy.typ")[Raddy Devlog]
+      - #chapter("content/raddy/raddy-docs.typ")[Raddy Docs]
 
     - #chapter("content/xmm/xmm.typ")[Simulation]
       - #chapter("content/simulation/math/main.typ")[Math & Impl]
