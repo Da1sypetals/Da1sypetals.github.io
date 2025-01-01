@@ -30,25 +30,26 @@ Computes on precision f64.
 #
 1.Constructors
 #
-1.1.Ad&lt;1&gt; (One dimensional)
-1.
-pub fn active_scalar(value: f64) -&gt; Self 
-
-
-2.
-pub fn given_scalar(value: f64, grad: f64, hess: f64) -&gt; Self
+1.1.pub fn ad(value: f64) -&gt; Ad&lt;1&gt;
+•
+Initializes a differentiated scalar.
 
 #
-1.2.Ad&lt;N&gt;
+1.2.pub fn vec&lt;const L: usize&gt;(values: &amp;amp;[f64]) -&gt; SVector&lt;Ad&lt;L&gt;, L&gt;
 •
-Note that SVector&lt;T, N&gt; is nalgebra static column vector type that holds N elements.
-
-1.
-pub fn inactive_scalar(value: f64) -&gt; Self
+Initializes a differentiated vector.
 
 
-2.
-pub fn inactive_vector(values: &amp;amp;SVector&lt;f64, ">
+•
+Panics if size mismatch.
+
+#
+1.3.pub fn val(value: f64) -&gt; Ad&lt;1&gt;
+•
+Initializes a constant scalar.
+
+#
+1.4.pub fn valvec&lt;const L: usize&gt;(values: &amp;amp;[f64])">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff" />
 
