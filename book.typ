@@ -19,7 +19,6 @@
     - #chapter("content/xmm/xmm.typ")[XMM]
     - #chapter("content/raddy/diffroad.typ")[The road to diff]
       - #chapter("content/raddy/raddy.typ")[Raddy Devlog]
-      - #chapter("content/raddy/raddy-docs.typ")[Raddy Docs]
 
     - #chapter("content/xmm/xmm.typ")[Simulation]
       - #chapter("content/simulation/math/main.typ")[Math & Impl]
@@ -27,13 +26,13 @@
 
     = #emoji.wrench Utilities
     - #chapter("content/archlinux/arch.typ")[Arch Linux Use Tips]
-    - #chapter("content/utils/utils.typ")[Arch Linux Use Tips]
+    - #chapter("content/utils/utils.typ")[Daily Tools]
     - #chapter("content/rust-tips/rust.typ")[Rust Tips]
       - #chapter("content/rust-tips/done-right.typ")[Done Right]
       - #chapter("content/rust-tips/cargo-tips.typ")[Cargo Tips]
 
 
-    = 🎼 Fun
+    = 🎼 Favorites
     - #chapter("content/fun/songs.typ")[Songs]
 
 

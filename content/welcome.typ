@@ -12,8 +12,9 @@
 - #link("https://www.yuque.com/da1sypetals/public", "语雀主页")
 
 
-== Fun projects
+== Personal projects
 
+- #link("https://github.com/Da1sypetals/Raddy", "Raddy, the (forward-mode) automatic differentiation system")
 - #link("https://github.com/Da1sypetals/ip-sim", "Simplified 2D reproduction of IPC & ABD (Graphics)")
 - #link("https://github.com/Da1sypetals/Symars", "Symars: Generate Rust code from SymPy expressions")
 - #link("https://github.com/Da1sypetals/RayTracer-Weekend", "A toy ray tracer")
