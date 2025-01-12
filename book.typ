@@ -30,10 +30,11 @@
     - #chapter("content/rust-tips/rust.typ")[Rust Tips]
       - #chapter("content/rust-tips/done-right.typ")[Done Right]
       - #chapter("content/rust-tips/cargo-tips.typ")[Cargo Tips]
+    - #chapter("content/network/network.typ")[Rust Network Basics]
 
 
     = 🎼 Favorites
-    - #chapter("content/fun/songs.typ")[Songs]
+    - #chapter("content/favorites/songs.typ")[我会唱的歌]
 
 
     = #emoji.construction Sample Pages

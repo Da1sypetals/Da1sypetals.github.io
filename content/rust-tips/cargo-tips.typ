@@ -16,3 +16,15 @@
 = `cargo publish` 网络连不上：
   - `cargo publish --registry crates-io`
   - 把代理关了即可
+
+= 给crate添加示例
+直接用`[[examples]]`列表形式，不要使用`bin`
+```toml
+[[example]]
+name = "basic"
+path = "src/examples/basic.rs"
+
+[[example]]
+name = "mass-spring"
+path = "src/examples/mass_spring.rs"
+```
