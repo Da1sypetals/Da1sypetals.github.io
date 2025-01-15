@@ -1,37 +1,6 @@
 #import "/book.typ": book-page
 #show: book-page.with(title: "Sample Page")
  
-#show outline.entry: it => {
-  if it.level == 1 {
-    v(12pt, weak: true)
-    strong(it)
-  } else {
-    let sz = 13pt - it.level * 0.5pt;
-    let indent = "";
-    let counter = 1;
-    while counter < it.level {
-      indent += $"    "$;
-      counter += 1;
-    }
-    indent + text(size: sz)[#it]
-
-   
-
-  }
-}
-
-#outline()
-
-
-#set heading(numbering: "1.")
-
-= 加密音乐格式解密：
-
-https://git.unlock-music.dev/um/web/releases/tag/v1.10.8
-
-用法：
-+ 下载legacy的压缩包，unzip
-+ 双击`index.html`即可
 
 = 代码仓库备份
 从提供的HTML代码中提取出的链接如下：

@@ -4,15 +4,15 @@
 #show: book
 
 #book-meta(
-  title: "Da1sypetals' Bookblog",
+  title: "Petals Book",
   authors: ("Da1sypetals",),
   summary: [
-    = Da1sypetals' Bookblog
+    = Petals Book
     = #emoji.bread Welcome!
     - #chapter("content/welcome.typ")[This is Da1sypetals!]
 
 
-    = #emoji.book Articles
+    = #emoji.book Takedowns
 
     - #chapter("content/ipc/try_impl_ipc.typ")[Try to implement IPC]
     - #chapter("content/CG/cg.typ")[Conjugate Gradient Method]
@@ -20,21 +20,17 @@
     - #chapter("content/raddy/diffroad.typ")[The road to diff]
       - #chapter("content/raddy/raddy.typ")[Raddy Devlog]
 
-    - #chapter("content/xmm/xmm.typ")[Simulation]
-      - #chapter("content/simulation/math/main.typ")[Math & Impl]
-      - #chapter("content/simulation/TRfilter-PN/main.typ")[Paper: TRPN]
+    - #chapter("content/simulation/main.typ")[Simulation]
+      - #chapter("content/simulation/math-details.typ")[Some math details]
+      - #chapter("content/simulation/TrustRegion.typ")[Read Paper: Trust Region Elastic Optimization]
 
-    = #emoji.wrench Utilities
-    - #chapter("content/archlinux/arch.typ")[Arch Linux Use Tips]
-    - #chapter("content/utils/utils.typ")[Daily Tools]
-    - #chapter("content/rust-tips/rust.typ")[Rust Tips]
-      - #chapter("content/rust-tips/done-right.typ")[Done Right]
-      - #chapter("content/rust-tips/cargo-tips.typ")[Cargo Tips]
-    - #chapter("content/network/network.typ")[Rust Network Basics]
+    = #emoji.wrench References
+    - #chapter("content/utils/backup-repo.typ")[Sites to backup your repo]
+    - #chapter("content/utils/unlock-music.typ")[Encrypted music format]
 
 
-    = 🎼 Favorites
-    - #chapter("content/favorites/songs.typ")[我会唱的歌]
+    = 🎼 歌
+    - #chapter("content/song/songs.typ")[我会唱的歌]
 
 
     = #emoji.construction Sample Pages

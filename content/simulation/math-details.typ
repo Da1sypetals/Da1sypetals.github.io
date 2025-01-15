@@ -30,7 +30,7 @@
 - 在对能量hessian进行SVD分解 (and further, project to SPD) 的时候，需要是rotation variant的，也就是 $U, V$ 的*行列式的符号*要一样。
 - 如果调库SVD，$U, V$ 的*行列式的符号*不一样怎么办？
   - TLDR：
-  #image("assets/svd.jpg", width: 60%)
+  #image("svd.jpg", width: 60%)
   ```rust
 fn rvsvd<const N: usize>(mat: &mat<N>) -> RvSvd<N> {
     let svd = mat.svd(true, true);

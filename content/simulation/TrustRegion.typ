@@ -8,8 +8,8 @@
 
 == Algorithm
 
-#image("assets/001.jpg")
-#image("assets/002.jpg")
+#image("001.jpg")
+#image("002.jpg")
 
 == Simulation Pipeline
 The described algorithm is run _*once each Newton-Raphson iteration*_.
