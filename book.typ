@@ -30,7 +30,7 @@
 
 
     = 🎼 歌
-    - #chapter("content/song/songs.typ")[我会唱的歌]
+    - #chapter("content/song/songs.typ")[ 我会唱的歌  ]
 
 
     = #emoji.construction Sample Pages

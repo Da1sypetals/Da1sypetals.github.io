@@ -3,6 +3,13 @@
 
 #let mini(x) = text(size: 12pt)[#x]
 
+#v(10cm)
+
+// ################### Content ################
+#text(size: 2.4em, weight: 900)[#link("https://songlist-frontend.vercel.app/", "我会唱的歌：点击这里")]
+
+#v(10cm)
+
 // ################### Content ################
 = 要学的歌
 - 红白
