@@ -20,14 +20,13 @@
 
 == Personal Projects
 
+- #link("https://github.com/Da1sypetals/Lsmkv", "A simple KV-store based on LSM tree.")
 - #link("https://github.com/Da1sypetals/Raddy", "Raddy, the (forward-mode) automatic differentiation system")
 - #link("https://github.com/Da1sypetals/ip-sim", "Simplified 2D reproduction of IPC & ABD (Graphics)")
-- #link("https://github.com/Da1sypetals/Symars", "Symars: Generate Rust code from SymPy expressions")
 - #link("https://github.com/Da1sypetals/RayTracer-Weekend", "A toy ray tracer")
   - Implemented following #link("https://raytracing.github.io/books/RayTracingTheNextWeek.html", "Ray tracing the next week").
 - #link("https://github.com/Da1sypetals/XMM-prototype", "XMM Operator (Deep learning)")
   - #link("https://github.com/Da1sypetals/cuda-Wavelet-KAN", "Implementation of a variant of xmm")
-- #link("https://github.com/Da1sypetals/kv-store", "A simple KV-store implementation")
 
 
 == Contact 
