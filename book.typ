@@ -24,6 +24,7 @@
     - #chapter("content/simulation/main.typ")[Simulation]
       - #chapter("content/simulation/math-details.typ")[Some math details]
       - #chapter("content/simulation/TrustRegion.typ")[Read Paper: Trust Region Elastic Optimization]
+    - #chapter("content/triton/triton_pitfalls.typ")[Triton common pitfalls]
 
     = #emoji.wrench References
     - #chapter("content/utils/backup-repo.typ")[Sites to backup your repo]
