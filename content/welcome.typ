@@ -3,8 +3,8 @@
 
 // ################### Content ###################
 
-= Welcome to Petals Book! 
-- This is Da1sypetals
+= Welcome to Petals Book!
+- This is Da1sypetals，也可以叫我黛西
 
 == About Me
 
@@ -12,6 +12,11 @@
   - 喜欢唱歌（古风歌）！
     - 是代表歌手为*黄诗扶、小曲儿、河图、Winky诗、贰婶，银临、HITA*的这个古风！不要找错啦 ♡
 
+
+== Experiences
+
+- 2025.3 \~ 腾讯互娱 游戏AI中心，实习
+- 2024 元知机器人研究院，科研实习
 
 == Pages
 
@@ -29,6 +34,6 @@
   - #link("https://github.com/Da1sypetals/cuda-Wavelet-KAN", "Implementation of a variant of xmm")
 
 
-== Contact 
+== Contact
 === Email
 `da1sypetals.iota@gmail.com`

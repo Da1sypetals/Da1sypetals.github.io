@@ -25,6 +25,7 @@
       - #chapter("content/simulation/math-details.typ")[Some math details]
       - #chapter("content/simulation/TrustRegion.typ")[Read Paper: Trust Region Elastic Optimization]
     - #chapter("content/triton/triton_pitfalls.typ")[Triton common pitfalls]
+    - #chapter("content/pt_cuda_booklet.typ")[PyTorch CUDA extension booklet]
 
     = #emoji.wrench References
     - #chapter("content/utils/backup-repo.typ")[Sites to backup your repo]
@@ -32,13 +33,13 @@
 
 
     = 🎼 歌
-    - #chapter("content/song/songs.typ")[ 我会唱的歌  ]
+    - #chapter("content/song/songs.typ")[ 我会唱的歌 ]
 
 
     = #emoji.construction Sample Pages
     - #chapter("content/Sample/sample-page.typ")[Sample Page]
       - #chapter("content/Sample/subchapter.typ")[Subchapter]
-  ]
+  ],
 )
 
 
@@ -49,6 +50,4 @@
 
 
 
-#build-meta(
-  dest-dir: "./docs",
-)
+#build-meta(dest-dir: "./docs")
