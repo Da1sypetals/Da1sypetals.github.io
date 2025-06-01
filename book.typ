@@ -26,6 +26,7 @@
       - #chapter("content/simulation/TrustRegion.typ")[Read Paper: Trust Region Elastic Optimization]
     - #chapter("content/triton/triton_pitfalls.typ")[Triton common pitfalls]
     - #chapter("content/pt_cuda_booklet.typ")[PyTorch CUDA extension booklet]
+    - #chapter("content/snapviewer/snapviewer.typ")[PyTorch memory snapshot viewer]
 
     = #emoji.wrench References
     - #chapter("content/utils/backup-repo.typ")[Sites to backup your repo]
