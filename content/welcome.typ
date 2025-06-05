@@ -25,6 +25,7 @@
 
 == Personal Projects
 
+- #link("https://github.com/Da1sypetals/SnapViewer", "PyTorch memory timeline snapshot viewer, fast and smooth")
 - #link("https://github.com/Da1sypetals/Lsmkv", "A simple KV-store based on LSM tree.")
 - #link("https://github.com/Da1sypetals/Raddy", "Raddy, the (forward-mode) automatic differentiation system")
 - #link("https://github.com/Da1sypetals/ip-sim", "Simplified 2D reproduction of IPC & ABD (Graphics)")
