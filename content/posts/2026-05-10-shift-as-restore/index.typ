@@ -9,30 +9,38 @@
 
 == Background
 
-Research on vocal performance differ significantly from other forms of art. The consumption of vocal music is human-centered: vocal art consumer tend to associate a vocal performance with a particular artist, rather than treating each song as an independent piece. This stands in stark contrast to the consumption of visual art design or instrumental music. Based on this observation, I decide that fine control is more important than end-to-end systems in the refinement of vocal performance.
+Research on vocal performance differs significantly from other forms of art. The consumption of vocal music is human-centered: consumers tend to associate a vocal performance with a particular artist, rather than treating each song as an independent piece. This stands in stark contrast to the consumption of visual art design or instrumental music.
 
-Therefore, rather than building end-to-end systems, a system that allows fine control on the pitch of each note is valuable. This stems from my observations:
+Additionally, the following observations are relevant:
 
-- Fine pitch shift remains an important problem in the production of vocal music, because companies that make this kind of software are still making money; as far as I know, deep learning is not the core of their proprietary algorithm.
-- Typical shift is within a small range (say $plus.minus 200 "cents"$). If your singing deviates from the expected pitch too much, you may need to practice singing instead of find a software to tune it.
+- Fine pitch shift remains an important problem in vocal music production, as companies that make this kind of software continue to be profitable. As far as I know, deep learning is not the core of their proprietary algorithms.
 
+- Typical pitch shifts are within a small range (say, $plus.minus 200 "cents"$). If your singing deviates from the expected pitch too much, you may need to practice singing instead of looking for software to tune it.
 
-== Modeling
+Based on these observations, I conclude that fine control is more important than end-to-end systems in the refinement of vocal performance. Therefore, even though the whole industry is focused on end-to-end models, a system that allows fine control over the pitch of each note remains valuable.
 
-=== Data is the main blocker
+== Design
+
+=== Data
+
+==== The main blocker
 
 Given the copyright nature of production-level music, it is extremely difficult to find high quality vocal stem, and there is basically no source of paired (before pitch shift, after pitch shift) data. Given this challenge, modeling this problem as supervised lerning is unrealistic, and we are forced to come up with a self-supervised (or unsupervised) approach.
 
-=== DSP algorithm come to our rescue
+==== DSP algorithms come to our rescue
 
-Existing non-DL DSP algorithms...
+Existing non-DL DSP algorithms, such as phase vocoders, WORLD@world, and time-domain pitch shifters (e.g., Rubberband), provide formant-preserving ways to shift pitch. They work reasonably well for large shifts where artificial timbre changes are expected or even desired. However, for my vocal fine-tuning scenario, these methods inevitably introduce audible artifacts, like metallic ringing, phasiness, and unnatural formant smearing.
+
+But this distortion is not chaotic; it follows a fixed, algorithm-dependent transform. The key observation is that the shifted audio from a traditional DSP algorithm can be treated as a distorted version of a hypothetical “cleanly restored” audio. This gives us a self-supervised path: we can deliberately create such distorted audio by chaining two opposite pitch shifts (with the same DSP engine) and then train a neural network to revert the distortion, effectively learning to restore the original quality without requiring paired before/after data.
 
 
 ==== Input data processing
 
 Artifact is mainly at ... so we ...
 
-=== Modeling Method
+=== Modeling
+
+// todo: a sentence or two to lead to the flowchart.
 
 #figure(image("flowchart.png"), caption: "Flow chart of the modeling method")
 
@@ -83,20 +91,26 @@ flowchart LR
 ==== Why Not Flow Matching or Diffusion
 
 
+==== Inference
+
+
 === Deep Learning, the Most and Least Important Part
 
-_This part, including plan and coding, is heavily (\~99%) assisted by LLMs._
+_This part, including design and coding, is heavily (\~99%) assisted by LLMs._
 
 ==== Network
 
+This part is very random currently. I just told LLMs to analyze the potential parameter count the model need to perform the task well, then have it design a random U-Net for me.
 
 ==== Optimizer
 
-Muon optimizer is used in parameters with ndim $>= 2$, and AdamW is used for the rest. As Su suggests @kexuefm-11416, Muon's update RMS is matched against AdamW's, and parameters of convolution layers are reshaped to allow $"msign"$ to operate on it.
+Muon@jordan2024muon optimizer is used in parameters with ndim $>= 2$, and AdamW@adamw is used for the rest. As Su suggests @kexuefm-11416, Muon's update RMS is matched against AdamW's, and parameters of convolution layers are reshaped to allow $"msign"$ to operate on it.
 
 I observed a smoother loss curve for Muon-hybrid training than AdamW-only.
 
 == Experiment
+
+=== Implementation
 
 
 == Demo Product
