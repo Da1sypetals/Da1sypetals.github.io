@@ -1492,7 +1492,6 @@ def cmd_new(section: str, title: str) -> bool:
         return False
 
     article_dir.mkdir(parents=True, exist_ok=False)
-    (article_dir / "images").mkdir(exist_ok=True)
 
     typ_content = (
         '#import "/config.typ": template, tufted\n'
