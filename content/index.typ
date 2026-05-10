@@ -9,11 +9,6 @@
 - Nickname: Da1sypetals
 - Email: `da1sypetals.iota@gmail.com`
 
-== 其他链接
-
-- #link("https://songs.petals.top")[我会唱的歌曲]
-- #link("https://prompts.petals.top")[提示词墙]
-
 == 爱好
 
 唱*古风歌*。
@@ -30,4 +25,9 @@
 - 《悦神》 KBShinya
 - 《第三十八年夏至》《永定四十年》 河图
 - 《东风志》 Aki阿杰
-- #link("https://songs.petals.top")[这里还有很多...]
+
+
+== 其他链接
+
+- #link("https://songs.petals.top")[更多我会唱的歌曲]
+- #link("https://prompts.petals.top")[提示词墙]

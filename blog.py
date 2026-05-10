@@ -703,6 +703,106 @@ def clean() -> bool:
         return False
 
 
+# 构建产物中不需要回源检查的路径（相对于 _site/）：
+# - assets/: 每次 copy_assets 已 rmtree+重建
+# - 顶层生成物：sitemap.xml / robots.txt / feed.xml
+# 注意 404.html 是来自 content/404.typ，会走正常回源检查。
+_PRUNE_EXEMPT_TOPS: set[str] = {"assets", "sitemap.xml", "robots.txt", "feed.xml"}
+
+
+def _source_exists_for_output(site_file: Path) -> bool:
+    """
+    判断 _site/ 中的一个输出文件是否仍对应 content/ 里一个有效源头。
+
+    规则：
+    - 直接存在 content/<rel>（图片、PDF 等按原名复制的资源） → 有效
+    - rel 是 "<section>/index.html"：
+        * content/<section>/index.typ 存在 → 有效（手写的分类页）
+        * content/<section>.typ 存在 → 有效（非目录页）
+        * content/<section>/ 下有任一带 index.typ 的子目录 → 有效（自动生成的分类页）
+    - rel 是 "<path>/index.html"：content/<path>/index.typ 存在 → 有效
+    - rel 是 "<path>.html"：content/<path>.typ 存在 → 有效
+    - rel 是 "<path>.pdf"：content/<path>.typ 存在 → 有效
+    """
+    rel = site_file.relative_to(SITE_DIR)
+    rel_posix = rel.as_posix()
+
+    # 直接对应 content/ 里的资源（图片等）
+    direct = CONTENT_DIR / rel
+    if direct.exists():
+        return True
+
+    # index.html 的三种来源
+    if rel.name == "index.html":
+        parent = rel.parent  # 相对于 content/ 的目录
+        if parent == Path("."):
+            # _site/index.html ← content/index.typ
+            return (CONTENT_DIR / "index.typ").exists()
+
+        section_dir = CONTENT_DIR / parent
+        if (section_dir / "index.typ").exists():
+            return True
+        if (CONTENT_DIR / f"{parent}.typ").exists():
+            return True
+        # 自动生成的分类首页：该目录下还有任一文章
+        if section_dir.is_dir():
+            for child in section_dir.iterdir():
+                if child.is_dir() and (child / "index.typ").exists():
+                    return True
+        return False
+
+    # 其他 .html / .pdf：对应 content/<stem>.typ
+    if rel.suffix in (".html", ".pdf"):
+        typ_source = CONTENT_DIR / rel.with_suffix(".typ")
+        return typ_source.exists()
+
+    return False
+
+
+def prune_orphans() -> None:
+    """
+    删除 _site/ 中源头已消失的产物（增量构建后的垃圾回收）。
+
+    跳过由其他步骤独立管理的文件：assets/、sitemap.xml、robots.txt、feed.xml。
+    """
+    if not SITE_DIR.exists():
+        return
+
+    removed_files = 0
+    for path in list(SITE_DIR.rglob("*")):
+        if not path.is_file():
+            continue
+
+        rel = path.relative_to(SITE_DIR)
+        top = rel.parts[0]
+        if top in _PRUNE_EXEMPT_TOPS:
+            continue
+
+        if _source_exists_for_output(path):
+            continue
+
+        path.unlink()
+        removed_files += 1
+
+    # 清理空目录（不删 _site/ 本身）
+    removed_dirs = 0
+    for path in sorted(SITE_DIR.rglob("*"), key=lambda p: len(p.parts), reverse=True):
+        if not path.is_dir():
+            continue
+        top = path.relative_to(SITE_DIR).parts[0] if path != SITE_DIR else ""
+        if top in _PRUNE_EXEMPT_TOPS:
+            continue
+        try:
+            path.rmdir()
+            removed_dirs += 1
+        except OSError:
+            # 非空目录
+            pass
+
+    if removed_files or removed_dirs:
+        print(f"🗑️  清理孤立产物: {removed_files} 个文件, {removed_dirs} 个空目录")
+
+
 class _ReloadBus:
     """SSE 事件总线，负责把 reload 事件推送到所有连接的浏览器。"""
 
@@ -1693,6 +1793,8 @@ def build(force: bool = False) -> bool:
 
     results.append(copy_assets())
     results.append(copy_content_assets(force))
+
+    prune_orphans()
 
     if site_url := get_site_url():
         results.append(build_section_indices())
