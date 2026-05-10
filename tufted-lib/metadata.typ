@@ -81,7 +81,7 @@
     "Untitled Page"
   }
   html.title(page-title)
-  html.link(rel: "icon", type: "image/png", href: "/assets/favicon.png")
+  html.link(rel: "icon", type: "image/svg+xml", href: "/assets/favicon.svg")
 
   // Date
   if type(date) == datetime {
