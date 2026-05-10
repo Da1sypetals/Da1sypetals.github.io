@@ -198,12 +198,18 @@ POST DATE
 *******************************************************************************/
 
 .post-date {
-    opacity: 0.55;
-    font-size: 0.9rem;
-    font-style: italic;
-    margin-top: -0.8rem;
+    font-style: italic !important;
+    font-size: 1.3rem !important;
+    color: #888 !important;
+    margin-top: -0.6rem;
     margin-bottom: 1.8rem;
     letter-spacing: 0.05em;
+    display: block;
+}
+
+html[data-theme="dark"] .post-date,
+html:not([data-theme]) .post-date {
+    color: #888 !important;
 }
 
 
