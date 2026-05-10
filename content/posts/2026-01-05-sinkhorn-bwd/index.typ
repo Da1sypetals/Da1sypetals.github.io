@@ -78,24 +78,24 @@ $ (I - R^T R) v = s_c - R^T s_r $
 == 算法
 
 1. *准备右端项*
-   $ s_r = (G dot.circle R) 1, quad s_c = (G dot.circle R)^T 1 $
+$ s_r = (G dot.o R) 1, quad s_c = (G dot.o R)^T 1 $
 
 2. *构建半正定系统*
-   $ S = I - R^T R $
-   $ b = s_c - R^T s_r $
+$ S = I - R^T R $
+$ b = s_c - R^T s_r $
 
 3. *用 CG 求解*
-   $ S tilde(v) = b $
+$ S tilde(v) = b $
 
 4. *构造解*
-   $ u = s_r - R tilde(v) $
-   $ v = tilde(v) $
+$ u = s_r - R tilde(v) $
+$ v = tilde(v) $
 
 5. *组装结果*
-   $ M_(i j) = u_i + v_j $
+$ M_(i j) = u_i + v_j $
 
 6. *最终梯度*
-   $ nabla_X L = (G - M) dot.circle R $
+$ nabla_X L = (G - M) dot.circle R $
 
 == PyTorch 实现
 

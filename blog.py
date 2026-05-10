@@ -44,13 +44,18 @@ Tufted Blog 构建脚本
 """
 
 import argparse
+import http.server
+import io
 import os
+import queue
 import re
 import shutil
+import socketserver
 import subprocess
 import sys
 import threading
 import time
+import urllib.parse
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from html.parser import HTMLParser
@@ -698,13 +703,221 @@ def clean() -> bool:
         return False
 
 
-class RebuildHandler:
-    """监视文件变化并触发增量构建"""
+class _ReloadBus:
+    """SSE 事件总线，负责把 reload 事件推送到所有连接的浏览器。"""
 
-    def __init__(self, debounce_seconds: float = 0.5):
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._subscribers: list[queue.Queue] = []
+
+    def subscribe(self) -> queue.Queue:
+        q: queue.Queue = queue.Queue(maxsize=8)
+        with self._lock:
+            self._subscribers.append(q)
+        return q
+
+    def unsubscribe(self, q: queue.Queue) -> None:
+        with self._lock:
+            if q in self._subscribers:
+                self._subscribers.remove(q)
+
+    def broadcast(self, event: str = "reload") -> None:
+        with self._lock:
+            subs = list(self._subscribers)
+        for q in subs:
+            try:
+                q.put_nowait(event)
+            except queue.Full:
+                pass
+
+
+# 注入到 HTML 响应中的 SSE livereload 客户端脚本
+_LIVERELOAD_SCRIPT = b"""
+<script>
+(function() {
+  var es = new EventSource('/__reload__');
+  es.addEventListener('reload', function() { location.reload(); });
+  es.onerror = function() { /* keepalive: browser will auto-reconnect */ };
+})();
+</script>
+"""
+
+
+class _PreviewRequestHandler(http.server.SimpleHTTPRequestHandler):
+    """
+    本地预览 HTTP 请求处理器：
+    - 找不到文件时返回 _site/404.html（HTTP 404）
+    - 对 HTML 响应注入 livereload 脚本（保存源文件时浏览器自动刷新）
+    - 提供 /__reload__ SSE 端点
+    """
+
+    # 由 serve() 注入
+    site_dir: Path = Path(".")
+    reload_bus: "_ReloadBus | None" = None
+
+    # 让 super().__init__ 知道根目录
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=str(self.site_dir), **kwargs)
+
+    # 关闭多余日志：只打印错误和重要请求
+    def log_message(self, format: str, *args) -> None:
+        # 静默正常的 200/304；保留 404/5xx 等异常
+        try:
+            status = int(args[1])
+        except (IndexError, ValueError):
+            status = 0
+        if status >= 400:
+            sys.stderr.write("[%s] %s\n" % (self.log_date_time_string(), format % args))
+
+    # SSE livereload 端点
+    def do_GET(self) -> None:
+        if self.path == "/__reload__":
+            self._serve_sse()
+            return
+        super().do_GET()
+
+    def _serve_sse(self) -> None:
+        if self.reload_bus is None:
+            self.send_error(503, "reload bus not configured")
+            return
+
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.send_header("Connection", "keep-alive")
+        self.send_header("X-Accel-Buffering", "no")
+        self.end_headers()
+
+        q = self.reload_bus.subscribe()
+        try:
+            # 立即发送一个 ping 让连接成立
+            self.wfile.write(b": connected\n\n")
+            self.wfile.flush()
+            while True:
+                try:
+                    event = q.get(timeout=15)
+                    payload = f"event: {event}\ndata: 1\n\n".encode("utf-8")
+                    self.wfile.write(payload)
+                    self.wfile.flush()
+                except queue.Empty:
+                    # 心跳，防止代理掐连接
+                    self.wfile.write(b": keepalive\n\n")
+                    self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, OSError):
+            return
+        finally:
+            self.reload_bus.unsubscribe(q)
+
+    # 重写 send_head：找不到文件时返回 404.html
+    def send_head(self):  # type: ignore[override]
+        path = self.translate_path(self.path)
+        f = None
+
+        # 处理目录：寻找 index.html
+        if os.path.isdir(path):
+            parts = urllib.parse.urlsplit(self.path)
+            if not parts.path.endswith("/"):
+                self.send_response(301)
+                new_parts = (parts[0], parts[1], parts[2] + "/", parts[3], parts[4])
+                self.send_header("Location", urllib.parse.urlunsplit(new_parts))
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return None
+            for index in ("index.html", "index.htm"):
+                index_path = os.path.join(path, index)
+                if os.path.isfile(index_path):
+                    path = index_path
+                    break
+            else:
+                # 目录无索引文件 → 404
+                return self._serve_404()
+
+        if not os.path.isfile(path):
+            return self._serve_404()
+
+        ctype = self.guess_type(path)
+
+        # HTML 响应：读入内存、注入 livereload 脚本
+        if ctype.startswith("text/html"):
+            try:
+                with open(path, "rb") as fp:
+                    data = fp.read()
+            except OSError:
+                return self._serve_404()
+
+            data = self._inject_livereload(data)
+            self.send_response(200)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.end_headers()
+            return io.BytesIO(data)
+
+        # 其他类型走父类标准流程
+        try:
+            f = open(path, "rb")
+        except OSError:
+            return self._serve_404()
+
+        try:
+            fs = os.fstat(f.fileno())
+            self.send_response(200)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(fs[6]))
+            self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
+            self.end_headers()
+            return f
+        except Exception:
+            f.close()
+            raise
+
+    def _serve_404(self):
+        not_found = self.site_dir / "404.html"
+        if not_found.is_file():
+            try:
+                data = not_found.read_bytes()
+            except OSError:
+                data = b"<h1>404 Not Found</h1>"
+        else:
+            data = b"<h1>404 Not Found</h1>"
+
+        data = self._inject_livereload(data)
+        self.send_response(404)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.end_headers()
+        return io.BytesIO(data)
+
+    def _inject_livereload(self, data: bytes) -> bytes:
+        idx = data.rfind(b"</body>")
+        if idx == -1:
+            return data + _LIVERELOAD_SCRIPT
+        return data[:idx] + _LIVERELOAD_SCRIPT + data[idx:]
+
+
+class _ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+    # 客户端中途断连（浏览器刷新/关闭标签/关闭 SSE 流）会抛出
+    # ConnectionResetError / BrokenPipeError / ConnectionAbortedError，
+    # 这些都是预期行为，不应打印栈。
+    def handle_error(self, request, client_address) -> None:  # type: ignore[override]
+        exc = sys.exc_info()[1]
+        if isinstance(exc, (ConnectionResetError, BrokenPipeError, ConnectionAbortedError)):
+            return
+        super().handle_error(request, client_address)
+
+
+class RebuildHandler:
+    """监视源文件变化并触发增量构建，构建完成后通过 SSE 通知浏览器刷新。"""
+
+    def __init__(self, reload_bus: "_ReloadBus | None" = None, debounce_seconds: float = 0.5):
         self.debounce = debounce_seconds
         self._last_build = 0.0
         self._lock = threading.Lock()
+        self.reload_bus = reload_bus
 
     def _should_rebuild(self, path: str) -> bool:
         return path.endswith(
@@ -727,21 +940,20 @@ class RebuildHandler:
         print("\n👀 检测到文件变化，正在重新构建...")
         try:
             build()
-            print("🔄 构建完成，刷新浏览器以查看更新。\n")
+            if self.reload_bus is not None:
+                self.reload_bus.broadcast("reload")
+            print("🔄 构建完成，浏览器已自动刷新。\n")
         except Exception as e:
             print(f"❌ 自动构建失败: {e}\n")
 
 
 def preview(port: int = 8000, open_browser_flag: bool = True) -> bool:
     """
-    启动本地预览服务器，并自动监视源文件变化进行增量构建。
-
-    首先尝试使用 uvx livereload（支持实时刷新），
-    如果失败则回退到 Python 内置的 http.server。
-
-    参数:
-        port: 服务器端口号，默认为 8000
-        open_browser_flag: 是否自动打开浏览器，默认为 True
+    启动本地预览服务器：
+    - 自给自足的 HTTP server（不依赖 livereload / uvx）
+    - 路径未匹配时返回 _site/404.html（HTTP 404），等价于 GitHub Pages 的行为
+    - 通过 SSE + 注入脚本实现保存即刷新
+    - watchdog 监视源文件变化 → 自动增量构建 → 推送 reload 事件
     """
     import webbrowser
 
@@ -749,69 +961,56 @@ def preview(port: int = 8000, open_browser_flag: bool = True) -> bool:
         print(f"  ⚠ 输出目录 {SITE_DIR} 不存在，请先运行 build 命令。")
         return False
 
-    observer = None
+    reload_bus = _ReloadBus()
+
+    # 将运行时上下文注入到 handler 类（HTTPServer 用类本身实例化）
+    handler_cls = type(
+        "_BoundPreviewHandler",
+        (_PreviewRequestHandler,),
+        {
+            "site_dir": SITE_DIR.resolve(),
+            "reload_bus": reload_bus,
+        },
+    )
+
     try:
         from watchdog.observers import Observer
     except ImportError:
-        print("  ⚠ 警告: 未安装 watchdog，无法自动重新构建。")
-        print("     请运行 uv add watchdog 安装，或手动执行 build 命令。")
-    else:
-        handler = RebuildHandler()
-        observer = Observer()
+        print("  ❌ 未安装 watchdog。请运行 uv add watchdog 安装。")
+        return False
 
-        watch_paths = [CONTENT_DIR, CONFIG_FILE, Path("tufted-lib"), ASSETS_DIR]
-        for path in watch_paths:
-            if path.exists():
-                observer.schedule(handler, str(path), recursive=True)
+    handler = RebuildHandler(reload_bus=reload_bus)
+    observer = Observer()
+    watch_paths = [CONTENT_DIR, CONFIG_FILE, Path("tufted-lib"), ASSETS_DIR]
+    for path in watch_paths:
+        if path.exists():
+            observer.schedule(handler, str(path), recursive=True)
+    observer.start()
+    print("👀 文件监视已启动：content/, config.typ, tufted-lib/, assets/")
 
-        observer.start()
-        print("👀 文件监视已启动，正在监视 content/, config.typ, tufted-lib/, assets/")
-        print("   修改源文件后将自动触发增量构建\n")
-
-    print("正在启动本地预览服务器（按 Ctrl+C 停止）...")
-    print()
+    server = _ThreadingHTTPServer(("", port), handler_cls)
 
     if open_browser_flag:
+        def _open():
+            time.sleep(0.5)
+            webbrowser.open(f"http://localhost:{port}")
+        threading.Thread(target=_open, daemon=True).start()
 
-        def open_browser():
-            time.sleep(1.5)  # 等待服务器启动
-            url = f"http://localhost:{port}"
-            print(f"  🚀 正在打开浏览器: {url}")
-            webbrowser.open(url)
-
-        # 在后台线程中打开浏览器
-        threading.Thread(target=open_browser, daemon=True).start()
-
+    print(f"🚀 预览服务器已启动: http://localhost:{port} （按 Ctrl+C 停止）\n")
     try:
-        # 首先尝试 uvx livereload
-        try:
-            result = subprocess.run(
-                ["uvx", "livereload", str(SITE_DIR), "-p", str(port)],
-                check=False,
-            )
-            return result.returncode == 0
-        except FileNotFoundError:
-            print("  未找到 uvx livereload，尝试 Python http.server...")
-        except KeyboardInterrupt:
-            print("\n服务器已停止。")
-            return True
-
-        # 回退到 Python http.server
-        try:
-            print("使用 Python 内置 http.server...")
-            result = subprocess.run(
-                [sys.executable, "-m", "http.server", str(port), "--directory", str(SITE_DIR)],
-                check=False,
-            )
-            return result.returncode == 0
-        except KeyboardInterrupt:
-            print("\n服务器已停止。")
-            return True
+        server.serve_forever()
+        return True
+    except KeyboardInterrupt:
+        print("\n服务器已停止。")
+        return True
     finally:
-        if observer:
-            print("\n🛑 停止文件监视...")
-            observer.stop()
-            observer.join()
+        try:
+            server.shutdown()
+        except Exception:
+            pass
+        server.server_close()
+        observer.stop()
+        observer.join()
 
 
 def parse_html_metadata(html_path: Path) -> dict[str, str]:
