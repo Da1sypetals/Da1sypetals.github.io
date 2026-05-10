@@ -2,12 +2,11 @@
 
 #let template = tufted.tufted-web.with(
   header-links: (
-    "/": "Home",
     "/posts/": "知识",
     "/art/": "文化",
-    "/english-post/": "en-Posts",
+    "/english-post/": "English",
     "/documents/": "文档",
-    "/about": "关于我",
+    "/": "About",
   ),
 
   website-title: "Da1sypetals",
