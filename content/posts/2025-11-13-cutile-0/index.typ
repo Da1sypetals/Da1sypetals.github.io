@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "cuTile 历险记，第0集：心智模型",
-  description: "cuTile 编程模型与抽象层级介绍",
   date: datetime(year: 2025, month: 11, day: 13),
 )
-
-= cuTile 历险记，第0集：心智模型
 
 首先，（在通常意义上来说）cuTile不是一个库，是一门语言，因为他捕获了Python的源码并且使用了自己的编译器对这段代码进行编译、Lower、执行等操作。这一点在宏观上可以对比triton。
 

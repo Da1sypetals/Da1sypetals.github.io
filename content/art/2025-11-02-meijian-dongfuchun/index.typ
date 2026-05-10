@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "AI带读歌词：《眉间冬赴春》",
-  description: "《眉间冬赴春》歌词赏析",
   date: datetime(year: 2025, month: 11, day: 2),
 )
-
-= AI带读歌词：《眉间冬赴春》
 
 *注意：历史同人和历史毫无关系，请勿随便代入。*
 

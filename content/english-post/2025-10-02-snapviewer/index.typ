@@ -1,12 +1,9 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "SnapViewer: Faster PyTorch Memory Allocation Viewer",
-  description: "A faster PyTorch GPU memory snapshot visualizer",
   date: datetime(year: 2025, month: 10, day: 1),
   lang: "en",
 )
-
-= SnapViewer: Faster PyTorch Memory Allocation Viewer
 
 == Background
 

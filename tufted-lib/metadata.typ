@@ -1,13 +1,12 @@
 #let seo-tags(
   title: "",
   author: none,
-  description: none,
   site-url: none,
   canonical-url: none,
   image-path: none,
   page-path: none,
 ) = {
-  // Process Absolute image path
+  // Process absolute image path
   let og-image = if image-path == none {
     none
   } else if image-path.starts-with("http") {
@@ -29,11 +28,6 @@
   html.elem("meta", attrs: (property: "og:title", content: title))
   html.elem("meta", attrs: (property: "og:type", content: auto-og-type))
 
-  if description != none {
-    html.meta(name: "description", content: description)
-    html.elem("meta", attrs: (property: "og:description", content: description))
-  }
-
   if canonical-url != none {
     html.elem("meta", attrs: (property: "og:url", content: canonical-url))
   }
@@ -54,28 +48,24 @@
   }
 }
 
-/// 生成完整的页面元数据，包括基础 meta 标签、SEO 标签和 RSS feed 链接
+/// 生成完整的页面元数据，包括基础 meta 标签和 SEO 标签
 ///
 /// 参数：
 /// - title: 页面标题
 /// - author: 作者名称
-/// - description: 页面描述
 /// - lang: 网站语言
 /// - date: 发布日期（datetime 或 string）
-/// - website-title: 网站标题（用于 RSS feed）
-/// - website-url: 网站 URL（用于 SEO 和 RSS feed）
+/// - website-title: 网站标题
+/// - website-url: 网站 URL（用于 SEO canonical URL）
 /// - image-path: 页面图片路径（用于 Open Graph）
-/// - feed-dir: RSS feed 目录配置
 #let metadata(
   title: "",
   author: none,
-  description: "",
   lang: "zh",
   date: none,
   website-title: "",
   website-url: none,
   image-path: none,
-  feed-dir: (),
 ) = {
   // Basic meta tags
   html.meta(charset: "utf-8")
@@ -100,18 +90,7 @@
     html.meta(name: "date", content: date)
   }
 
-  // RSS feed link
-  if feed-dir != none and feed-dir.len() > 0 {
-    let rss-title = if website-title != "" { website-title } else { title }
-    html.link(
-      rel: "alternate",
-      type: "application/rss+xml",
-      href: "/feed.xml",
-      title: rss-title + " RSS Feed",
-    )
-  }
-
-  // Link
+  // Canonical link
   let page-path = sys.inputs.at("page-path", default: none)
 
   let canonical-url = if website-url != none and page-path != none {
@@ -134,7 +113,6 @@
   seo-tags(
     title: title,
     author: author,
-    description: description,
     site-url: website-url,
     image-path: image-path,
     page-path: page-path,

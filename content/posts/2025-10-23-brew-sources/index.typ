@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Brew 换源",
-  description: "Homebrew 换源教程",
   date: datetime(year: 2025, month: 10, day: 23),
 )
-
-= Brew 换源
 
 原文：
 

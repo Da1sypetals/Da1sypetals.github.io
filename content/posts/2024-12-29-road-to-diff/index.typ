@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "自动求导, 道阻且长",
-  description: "Symars 和 Raddy 自动求导库的来龙去脉",
   date: datetime(year: 2024, month: 12, day: 29),
 )
-
-= 自动求导, 道阻且长
 
 #link("https://github.com/Da1sypetals/Symars")[Symars] Rust代码生成库和 #link("https://github.com/Da1sypetals/Raddy")[Raddy] 自动求导库的来龙去脉
 

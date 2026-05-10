@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "cuTile 历险记，第1集：编译",
-  description: "cuTile 编译流程探索",
   date: datetime(year: 2025, month: 12, day: 6),
 )
-
-= cuTile 历险记，第1集：编译
 
 原本第一集应该是语法和随便找个bmm，flash-attn2的kernel来实现一下并且进行benchmark的，因为所以gpu编程博客都是这样的。
 

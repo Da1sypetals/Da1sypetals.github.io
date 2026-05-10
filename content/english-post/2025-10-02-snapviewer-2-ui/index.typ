@@ -1,12 +1,9 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Snapviewer Devlog #2: UI",
-  description: "Building the UI as a Hybrid Rust & Python Application",
   date: datetime(year: 2025, month: 10, day: 2),
   lang: "en",
 )
-
-= Snapviewer Devlog #2: UI
 
 *Intro: Building the UI as a Hybrid Rust & Python Application*
 

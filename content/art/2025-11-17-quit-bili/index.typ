@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "我（初步）戒掉了 Bilibili",
-  description: "关于戒掉Bilibili的经历和感受",
   date: datetime(year: 2025, month: 11, day: 17),
 )
-
-= 我（初步）戒掉了 Bilibili
 
 我决定删掉 bilibili.
 

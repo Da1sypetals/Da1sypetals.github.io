@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "DeepSeek mHC的简单演示",
-  description: "Manifold Constrained Hyper-Connection 简单实现",
   date: datetime(year: 2026, month: 1, day: 4),
 )
-
-= DeepSeek mHC的简单演示（可能有错误）
 
 DeepSeek发布了最新的魔改版Residual Connection：Manifold Constrained Hyper-Connection.
 

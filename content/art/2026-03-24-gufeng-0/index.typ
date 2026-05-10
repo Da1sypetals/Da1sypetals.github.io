@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "我听到的古风歌01：笛箫，二胡，唢呐",
-  description: "古风歌曲中的传统乐器赏析",
   date: datetime(year: 2026, month: 3, day: 24),
 )
-
-= 我听到的古风歌01：笛箫，二胡，唢呐
 
 笛箫、二胡、唢呐，是神奇的一类乐器。
 

@@ -1,12 +1,9 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Triton Common Pitfalls",
-  description: "Common pitfalls when using OpenAI Triton",
   date: datetime(year: 2025, month: 10, day: 2),
   lang: "en",
 )
-
-= Triton Common Pitfalls
 
 From the perspective of a newbie user
 

@@ -1,14 +1,11 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "不通过反转正向传播的方式计算sinkhorn迭代的梯度",
-  description: "Sinkhorn迭代梯度的隐式微分计算",
   date: datetime(year: 2026, month: 1, day: 5),
 )
 
 #let diag = math.op("diag")
 #let pdv(y, x) = $(diff #y) / (diff #x)$
-
-= 不通过反转正向传播的方式计算sinkhorn迭代的梯度
 
 == 问题设定
 

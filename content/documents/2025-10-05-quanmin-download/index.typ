@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "全民K歌如何下载歌曲",
-  description: "全民K歌歌曲下载教程",
   date: datetime(year: 2025, month: 10, day: 5),
 )
-
-= 全民K歌如何下载歌曲
 
 == 1. 用默认浏览器打开
 

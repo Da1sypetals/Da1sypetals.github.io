@@ -1,12 +1,9 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Try To Implement IPC",
-  description: "Implementing IPC family algorithms in Rust",
   date: datetime(year: 2025, month: 10, day: 2),
   lang: "en",
 )
-
-= Try To Implement IPC
 
 *Intro: A taste of the Rust programming language*
 

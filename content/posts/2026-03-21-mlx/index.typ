@@ -1,13 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "MLX 初体验",
-  description: "苹果 MLX 框架初体验与性能优化",
   date: datetime(year: 2026, month: 3, day: 21),
 )
-
-= MLX 初体验
-
-
 
 从公司领到了人生第一台MacBook，据说苹果的GPU有一套虽然没有CUDA那么庞大，但是封装的比较好的生态，于是开始尝试玩苹果的GPU。
 

@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "共轭梯度：一种高中解析几何的视角",
-  description: "从直观上理解共轭梯度算法",
   date: datetime(year: 2024, month: 12, day: 7),
 )
-
-= 共轭梯度：一种高中解析几何的视角
 
 本文没有任何数学推导。我们从直观上理解这个算法，然后直接介绍算法的流程。希望了解数学推导的读者可以查看 #link("https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf")[CMU 的教案]及其#link("https://flat2010.github.io/2018/10/26/%E5%85%B1%E8%BD%AD%E6%A2%AF%E5%BA%A6%E6%B3%95%E9%80%9A%E4%BF%97%E8%AE%B2%E4%B9%89/#8-%E5%85%B1%E8%BD%AD%E6%A2%AF%E5%BA%A6%E6%B3%95")[翻译]。
 

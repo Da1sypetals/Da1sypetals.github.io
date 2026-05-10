@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Triton Tensor Descriptor: 茴字的第三种写法",
-  description: "Triton Tensor Descriptor API 介绍",
   date: datetime(year: 2025, month: 10, day: 31),
 )
-
-= Triton Tensor Descriptor: 茴字的第三种写法
 
 今天我们来介绍 Triton 中的第三种进行 tensor 指针运算的 API：Tensor Descriptor。内容来自#link("https://triton-lang.org/main/python-api/generated/triton.language.make_tensor_descriptor.html")[triton 文档]。
 

@@ -1,12 +1,9 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "SnapViewer Devlog #3: Optimizations",
-  description: "Memory and speed performance optimizations for SnapViewer",
   date: datetime(year: 2025, month: 10, day: 2),
   lang: "en",
 )
-
-= SnapViewer Devlog #3: Optimizations
 
 *Intro: Troubleshooting Memory and Speed Performance*
 

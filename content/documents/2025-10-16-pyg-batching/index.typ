@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "PyG Batching",
-  description: "PyTorch Geometric Batching 机制详解",
   date: datetime(year: 2025, month: 10, day: 16),
 )
-
-= PyG Batching
 
 内容来自#link("https://pytorch-geometric.readthedocs.io/en/latest/advanced/batching.html")[官方文档].
 

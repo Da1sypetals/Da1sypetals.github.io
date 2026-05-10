@@ -1,7 +1,6 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "404 - 页面未找到",
-  description: "页面未找到",
 )
 
 #html.div(

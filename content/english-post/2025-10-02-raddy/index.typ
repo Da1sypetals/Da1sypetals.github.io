@@ -1,12 +1,9 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Raddy devlog: forward autodiff system",
-  description: "Raddy and Symars: forward autodiff and symbolic codegen libraries",
   date: datetime(year: 2025, month: 10, day: 2),
   lang: "en",
 )
-
-= Raddy devlog: forward autodiff system
 
 *TL;DR:* I created #link("https://github.com/Da1sypetals/Raddy")[Raddy], a forward autodiff library, and #link("https://github.com/Da1sypetals/Symars")[Symars], a symbolic codegen library.
 

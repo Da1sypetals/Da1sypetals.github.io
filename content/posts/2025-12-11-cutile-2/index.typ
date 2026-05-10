@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "cuTile 历险记，第2集：eDSL, DX & LSP",
-  description: "为 cuTile 编写 LSP 类型提示工具",
   date: datetime(year: 2025, month: 12, day: 11),
 )
-
-= cuTile 历险记，第2集：eDSL, DX & LSP
 
 == eDSL，开发难度，以及DX
 

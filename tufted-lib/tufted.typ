@@ -15,7 +15,6 @@
   // Meta data
   title: "",
   author: none,
-  description: "",
   lang: "zh",
   date: none,
   website-title: "",
@@ -23,9 +22,6 @@
 
   // For SEO
   image-path: none,
-
-  // For RSS
-  feed-dir: (),
 
   // Custom header and footer
   header-elements: (),
@@ -46,23 +42,6 @@
 
   set text(lang: lang)
 
-  // 在第一个 level-1 标题之后显示发布日期（浅色小字）
-  let date-shown = state("_tufted-date-shown", false)
-  show heading.where(level: 1): it => {
-    it
-    context {
-      if date != none and not date-shown.get() {
-        date-shown.update(true)
-        let date-text = if type(date) == datetime {
-          date.display("[year]-[month]-[day]")
-        } else {
-          str(date)
-        }
-        html.div(class: "post-date", date-text)
-      }
-    }
-  }
-
   html.html(
     lang: lang,
     {
@@ -72,13 +51,11 @@
         metadata(
           title: title,
           author: author,
-          description: description,
           lang: lang,
           date: date,
           website-title: website-title,
           website-url: website-url,
           image-path: image-path,
-          feed-dir: feed-dir,
         )
 
         // load CSS
@@ -131,9 +108,22 @@
           }
         )
 
-        // Main content
+        // Main content: 自动渲染 title + 发布日期，然后是正文
         html.article(
-          html.section(content),
+          html.section({
+            if title != "" {
+              [= #title]
+              if date != none {
+                let date-text = if type(date) == datetime {
+                  date.display("[year]-[month]-[day]")
+                } else {
+                  str(date)
+                }
+                html.div(class: "post-date", date-text)
+              }
+            }
+            content
+          }),
         )
 
         // Custom footer elements

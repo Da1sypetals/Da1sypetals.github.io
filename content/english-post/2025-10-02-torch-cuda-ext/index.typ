@@ -1,12 +1,9 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Notes on Writing PyTorch CUDA Extensions",
-  description: "Practical notes on PyTorch CUDA extension development",
   date: datetime(year: 2025, month: 10, day: 2),
   lang: "en",
 )
-
-= Notes on Writing PyTorch CUDA Extensions
 
 *Intro: PyTorch is a Deep Learning Operating System.*
 

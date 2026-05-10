@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Pedalboard 文档",
-  description: "Spotify Pedalboard API 文档摘录",
   date: datetime(year: 2025, month: 10, day: 4),
 )
-
-= Pedalboard 文档
 
 Github: #link("https://github.com/spotify/pedalboard")
 

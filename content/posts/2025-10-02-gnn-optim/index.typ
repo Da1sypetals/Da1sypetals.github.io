@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "近期GNN Attention算子优化工作速览",
-  description: "GNN Attention算子优化调研",
   date: datetime(year: 2025, month: 10, day: 2),
 )
-
-= 近期GNN Attention算子优化工作速览
 
 注：本文用LLM辅助写作的地方主要在：*我认为LLM比我理解的更好的地方，会用LLM的表述代替。*
 

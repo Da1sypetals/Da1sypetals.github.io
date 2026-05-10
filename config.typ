@@ -11,10 +11,8 @@
 
   website-title: "Da1sypetals",
   author: "Da1sypetals",
-  description: "Da1sypetals 的个人博客",
   website-url: "https://da1sypetals.github.io",
   lang: "zh",
-  feed-dir: ("/posts/", "/english-post/"),
 
   header-elements: (
     [Da1sypetals],

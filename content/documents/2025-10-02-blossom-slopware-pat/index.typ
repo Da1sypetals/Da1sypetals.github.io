@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Blossom Slopware PAT",
-  description: "Blossom Slopware Fine Grained Access Token",
   date: datetime(year: 2025, month: 10, day: 2),
 )
-
-= Blossom Slopware PAT
 
 blossom-slopware 的永不过期的 Fine Grained Access Token
 

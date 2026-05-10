@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "我听到的古风（其实不是）歌00：歌行四方",
-  description: "《歌行四方》音乐赏析",
   date: datetime(year: 2026, month: 3, day: 6),
 )
-
-= 我听到的古风（其实不是）歌00：歌行四方
 
 *Disclaimer：我没有任何民族乐器、宗教、乐理知识；写作表达个人看法。*
 

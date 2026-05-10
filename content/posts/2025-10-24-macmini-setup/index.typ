@@ -1,11 +1,8 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "我的 Mac Mini Setup",
-  description: "Mac Mini M4 配置记录",
   date: datetime(year: 2025, month: 10, day: 24),
 )
-
-= 我的 Mac Mini Setup
 
 花点时间配置一下我的Mac Mini.
 
