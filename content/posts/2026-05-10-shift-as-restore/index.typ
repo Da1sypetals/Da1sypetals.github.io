@@ -23,13 +23,11 @@ Based on these observations, I conclude that fine control is more important than
 
 === Data
 
-==== The main blocker
-
 Given the copyright nature of production-level music, it is extremely difficult to find high quality vocal stem, and there is basically no source of paired (before pitch shift, after pitch shift) data. Given this challenge, modeling this problem as supervised lerning is unrealistic, and we are forced to come up with a self-supervised (or unsupervised) approach.
 
 ==== DSP algorithms come to our rescue
 
-Existing non-DL DSP algorithms, such as phase vocoders, WORLD@world, and time-domain pitch shifters (e.g., Rubberband), provide formant-preserving ways to shift pitch. They work reasonably well for large shifts where artificial timbre changes are expected or even desired. However, for my vocal fine-tuning scenario, these methods inevitably introduce audible artifacts, like metallic ringing, phasiness, and unnatural formant smearing.
+Existing non-DL#footnote[Deep Learning] DSP algorithms, such as phase vocoders, WORLD@world, and time-domain pitch shifters (e.g., Rubberband), provide formant-preserving ways to shift pitch. They work reasonably well when artificial timbre changes are expected or even desired. However, for my vocal fine-tuning scenario, these methods inevitably introduce audible artifacts, like metallic ringing, phasiness, and unnatural formant smearing.
 
 But this distortion is not chaotic; it follows a fixed, algorithm-dependent transform. The key observation is that the shifted audio from a traditional DSP algorithm can be treated as a distorted version of a hypothetical “cleanly restored” audio. This gives us a self-supervised path: we can deliberately create such distorted audio by chaining two opposite pitch shifts (with the same DSP engine) and then train a neural network to revert the distortion, effectively learning to restore the original quality without requiring paired before/after data.
 
@@ -59,7 +57,7 @@ flowchart LR
 
     %% Bottom row
     PE(["Pitch Envelope<br/>(keyframes +<br/>lerp between frames)"])
-    NEG["−"]
+    NEG["-"]
     INV([Inverted Pitch Envelope])
 
     %% Main flow
@@ -96,11 +94,24 @@ flowchart LR
 
 === Deep Learning, the Most and Least Important Part
 
-_This part, including design and coding, is heavily (\~99%) assisted by LLMs._
+_This part, including design and coding, is heavily assisted by LLMs._
+
+==== Representation and Loss
+
+I studied this part intensely, but the final solution was a compromising one.
+
+The desired representation should exhibit:
+
++ Mathematically invertible to raw waveform
++ Deep-Learning friendly, pattern is easy for neural network to learn
+
+STFT exhibits property 1, while Mel-Spectrogram exhibits property 2. But after a few rounds of experiments, either caused by insufficient data or domain gap, performance of NN learning on Mel-spectrogram outperform STFT massively.
+
+I am using Mel-spectrogram *for now*, but I am very interested in designing audio representation that has good enough theoretical properties, and will keep researching on this.
 
 ==== Network
 
-This part is very random currently. I just told LLMs to analyze the potential parameter count the model need to perform the task well, then have it design a random U-Net for me.
+This part is very random currently. I just told LLMs to analyze the potential parameter count the model need to perform the task well, then have it design a random Temporal U-Net for me.
 
 ==== Optimizer
 
@@ -108,9 +119,6 @@ Muon@jordan2024muon optimizer is used in parameters with ndim $>= 2$, and AdamW@
 
 I observed a smoother loss curve for Muon-hybrid training than AdamW-only.
 
-== Experiment
-
-=== Implementation
 
 
 == Demo Product

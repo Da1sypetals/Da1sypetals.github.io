@@ -214,6 +214,60 @@ html:not([data-theme]) .post-date {
 
 
 /*******************************************************************************
+POST HEADING NUMBERING
+仅文章页（article.post）的章节标题自动编号；不影响首页和分类页。
+Typst 把用户的 ==/===/====/===== 渲染成 <h3>~<h6>（<h2> 是文章主标题）。
+计数器锚定到 .post-date 之后的兄弟元素，跳过文章主标题；并排除 typst 生成的
+bibliography 区块。
+*******************************************************************************/
+
+article.post > section {
+    counter-reset: h3 h4 h5 h6;
+}
+
+article.post > section .post-date ~ h3 {
+    counter-increment: h3;
+    counter-reset: h4 h5 h6;
+}
+
+article.post > section .post-date ~ h3::before {
+    content: counter(h3) ". ";
+}
+
+article.post > section .post-date ~ h4 {
+    counter-increment: h4;
+    counter-reset: h5 h6;
+}
+
+article.post > section .post-date ~ h4::before {
+    content: counter(h3) "." counter(h4) " ";
+}
+
+article.post > section .post-date ~ h5 {
+    counter-increment: h5;
+    counter-reset: h6;
+}
+
+article.post > section .post-date ~ h5::before {
+    content: counter(h3) "." counter(h4) "." counter(h5) " ";
+}
+
+article.post > section .post-date ~ h6 {
+    counter-increment: h6;
+}
+
+article.post > section .post-date ~ h6::before {
+    content: counter(h3) "." counter(h4) "." counter(h5) "." counter(h6) " ";
+}
+
+/* 排除 typst 生成的引用文献小节 */
+article.post > section section[role="doc-bibliography"] h2::before,
+article.post > section section[role="doc-bibliography"] h3::before {
+    content: none;
+}
+
+
+/*******************************************************************************
 THEME TOGGLE BUTTON (DeepWiki Style)
 *******************************************************************************/
 

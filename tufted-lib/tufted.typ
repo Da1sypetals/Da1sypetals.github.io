@@ -109,7 +109,11 @@
         )
 
         // Main content: 自动渲染 title + 发布日期，然后是正文
-        html.article(
+        // 仅文章页（有 date 字段）加 class="post"，触发自动编号样式
+        let article-attrs = if date != none { (class: "post",) } else { (:) }
+        html.elem(
+          "article",
+          attrs: article-attrs,
           html.section({
             if title != "" {
               [= #title]
