@@ -12,7 +12,7 @@
   website-title: "Da1sypetals",
   author: "Da1sypetals",
   description: "Da1sypetals 的个人博客",
-  website-url: "https://blog.petals.top",
+  website-url: "https://da1sypetals.github.io",
   lang: "zh",
   feed-dir: ("/posts/", "/english-post/"),
 
