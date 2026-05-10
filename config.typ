@@ -11,7 +11,7 @@
 
   website-title: "Da1sypetals",
   author: "Da1sypetals",
-  website-url: "https://da1sypetals.github.io",
+  website-url: "https://blog.petals.top",
   lang: "zh",
 
   header-elements: (
