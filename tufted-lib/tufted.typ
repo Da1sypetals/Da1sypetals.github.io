@@ -46,6 +46,23 @@
 
   set text(lang: lang)
 
+  // 在第一个 level-1 标题之后显示发布日期（浅色小字）
+  let date-shown = state("_tufted-date-shown", false)
+  show heading.where(level: 1): it => {
+    it
+    context {
+      if date != none and not date-shown.get() {
+        date-shown.update(true)
+        let date-text = if type(date) == datetime {
+          date.display("[year]-[month]-[day]")
+        } else {
+          str(date)
+        }
+        html.div(class: "post-date", date-text)
+      }
+    }
+  }
+
   html.html(
     lang: lang,
     {
