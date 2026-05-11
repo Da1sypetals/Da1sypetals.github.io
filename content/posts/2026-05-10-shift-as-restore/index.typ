@@ -97,7 +97,7 @@ I studied this part intensely, but the final solution was a compromising one.
 
 The desired representation should exhibit:
 
-+ Mathematically invertible to raw waveform
++ Bidirectionally-covertible between the representation and high-quality waveform, preferablly mathematically invertible
 + Deep-Learning friendly, pattern is easy for neural network to learn
 
 STFT exhibits property 1, Mel-Spectrogram exhibits property 2. But after a few rounds of experiments, either caused by insufficient data or the inherent properties of STFT, performance of NN learning on Mel-spectrogram outperform STFT massively.
@@ -140,6 +140,14 @@ Transition segments (whose $f_0$ is not consistent in a small time window) produ
 Plot of input/output loudness distribution shows that loudness consistency is learned, but difference $>3 "db"$ is still observed. Therefore auxiliary loss to penalize loudness difference with weight $lambda_"loudness"=1/16$ is added as an attempt to alleviate this probelm.
 
 #figure(image("loudness.png"))
+
+=== V1.7
+
+Previous versions merges conditions (ContentVec, $f_0$, volume) by adding, which is used by Diff-SVC@diffsvc, v1.7 uses channel concatenation.
+
+We have GT $f_0$ at inference (directly shifted by factor $2^("cents"/100)$), so the $f_0$ input to the network (U-Net, Vocoder) does not need to come from $f_0$ estimation of the artifact audio; instead we can directly use the $f_0$ estimation of the clean audio.
+
+=== TODO: iterating more versions
 
 == Demo Product
 
