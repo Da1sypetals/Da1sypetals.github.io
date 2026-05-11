@@ -4,7 +4,6 @@
   header-links: (
     "/posts/": "知识",
     "/art/": "文化",
-    "/english-post/": "English",
     "/documents/": "文档",
     "/": "About",
   ),

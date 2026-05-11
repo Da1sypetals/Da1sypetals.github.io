@@ -32,64 +32,59 @@ Existing non-DL#footnote[Deep Learning] DSP algorithms, such as phase vocoders, 
 But this distortion is not chaotic; it follows a fixed, algorithm-dependent transform. The key observation is that the shifted audio from a traditional DSP algorithm can be treated as a distorted version of a hypothetical “cleanly restored” audio. This gives us a self-supervised path: we can deliberately create such distorted audio by chaining two opposite pitch shifts (with the same DSP engine) and then train a neural network to revert the distortion, effectively learning to restore the original quality without requiring paired before/after data.
 
 
-==== Input data processing
-
-Artifact is mainly at ... so we ...
 
 === Modeling
 
 // todo: a sentence or two to lead to the flowchart.
 
+The diagram below illustrates how the system works during training.
+
 #figure(image("flowchart.png"), caption: "Flow chart of the modeling method")
 
-```mermaid
-flowchart LR
-    %% Top row
-    RA([Restored Audio])
-    NN[NN]
+// ```mermaid
+// flowchart LR
+//     %% Top row
+//     RA([Restored Audio])
+//     NN[NN]
 
-    %% Middle row
-    IA([Input Audio])
-    RB1["Rubberband<br/>(pitch shift)"]
-    SA([Shifted audio])
-    RB2["Rubberband<br/>(pitch shift)"]
-    DA([Distorted Audio])
+//     %% Middle row
+//     IA([Input Audio])
+//     RB1["Rubberband<br/>(pitch shift)"]
+//     SA([Shifted audio])
+//     RB2["Rubberband<br/>(pitch shift)"]
+//     DA([Distorted Audio])
 
-    %% Bottom row
-    PE(["Pitch Envelope<br/>(keyframes +<br/>lerp between frames)"])
-    NEG["-"]
-    INV([Inverted Pitch Envelope])
+//     %% Bottom row
+//     PE(["Pitch Envelope<br/>(keyframes +<br/>lerp between frames)"])
+//     NEG["-"]
+//     INV([Inverted Pitch Envelope])
 
-    %% Main flow
-    IA --> RB1 --> SA --> RB2 --> DA
+//     %% Main flow
+//     IA --> RB1 --> SA --> RB2 --> DA
 
-    %% Loss connection
-    RA <-->|Loss| IA
+//     %% Loss connection
+//     RA <-->|Loss| IA
 
-    %% Pitch envelope routing
-    PE --> RB1
-    PE --> NEG --> INV
-    INV --> RB2
+//     %% Pitch envelope routing
+//     PE --> RB1
+//     PE --> NEG --> INV
+//     INV --> RB2
 
-    %% Neural network restoration
-    DA --> NN --> RA
+//     %% Neural network restoration
+//     DA --> NN --> RA
 
-    %% Styles
-    classDef input fill:#efe3b0,stroke:#d4a000,stroke-width:2px,color:#000;
-    classDef middle fill:#f3dfc7,stroke:#d89b00,stroke-width:2px,color:#000;
-    classDef green fill:#cdddc9,stroke:#6aa84f,stroke-width:2px,color:#000;
-    classDef red fill:#e9c7c7,stroke:#c0504d,stroke-width:2px,color:#000;
+//     %% Styles
+//     classDef input fill:#efe3b0,stroke:#d4a000,stroke-width:2px,color:#000;
+//     classDef middle fill:#f3dfc7,stroke:#d89b00,stroke-width:2px,color:#000;
+//     classDef green fill:#cdddc9,stroke:#6aa84f,stroke-width:2px,color:#000;
+//     classDef red fill:#e9c7c7,stroke:#c0504d,stroke-width:2px,color:#000;
 
-    class IA,PE input;
-    class RA,SA,DA,INV middle;
-    class RB1,RB2,NEG green;
-    class NN red;
-```
+//     class IA,PE input;
+//     class RA,SA,DA,INV middle;
+//     class RB1,RB2,NEG green;
+//     class NN red;
+// ```
 
-==== Why Not Flow Matching or Diffusion
-
-
-==== Inference
 
 
 === Deep Learning, the Most and Least Important Part
@@ -105,9 +100,9 @@ The desired representation should exhibit:
 + Mathematically invertible to raw waveform
 + Deep-Learning friendly, pattern is easy for neural network to learn
 
-STFT exhibits property 1, while Mel-Spectrogram exhibits property 2. But after a few rounds of experiments, either caused by insufficient data or domain gap, performance of NN learning on Mel-spectrogram outperform STFT massively.
+STFT exhibits property 1, Mel-Spectrogram exhibits property 2. But after a few rounds of experiments, either caused by insufficient data or the inherent properties of STFT, performance of NN learning on Mel-spectrogram outperform STFT massively.
 
-I am using Mel-spectrogram *for now*, but I am very interested in designing audio representation that has good enough theoretical properties, and will keep researching on this.
+*For now* Mel-spectrogram is used, but I am still very interested in designing audio representation that has good enough theoretical properties, and will keep investigating.
 
 ==== Network
 
@@ -120,8 +115,36 @@ Muon@jordan2024muon optimizer is used in parameters with ndim $>= 2$, and AdamW@
 I observed a smoother loss curve for Muon-hybrid training than AdamW-only.
 
 
+== Experiments
+
+=== V1
+
+Use WORLD for pitch shift, U-Net for restoration. Produces reasonable results.
+
+- Vocoder: NSF-HiFiGAN
+- Input conditioning:
+  - $f_0$ curve
+  - Per-frame ContentVec@qian2022contentvecimprovedselfsupervisedspeech
+
+
+=== V1.5
+
+Use Rubberband for pitch shift, U-Net for restoration. Rubberband (with formant preserving option enabled) has better quality than WORLD, so it produces better results.
+
+=== V1.6
+
+Enhanced data preparation and loss weights:
+
+Transition segments (whose $f_0$ is not consistent in a small time window) produces more intense aritfacts, I give transition frames $16 times$ loss weight.
+
+Plot of input/output loudness distribution shows that loudness consistency is learned, but difference $>3 "db"$ is still observed. Therefore auxiliary loss to penalize loudness difference with weight $lambda_"loudness"=1/16$ is added as an attempt to alleviate this probelm.
+
+#figure(image("loudness.png"))
 
 == Demo Product
+
+The demo is an application on macOS implemented with #link("https://github.com/emilk/egui/", "egui"). Inference is implemented with mlx@mlx, and Metal compute shaders are implemented for operations unsupported in mlx.
+
 
 
 #bibliography("refs.bib")
