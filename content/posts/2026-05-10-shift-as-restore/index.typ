@@ -87,9 +87,9 @@ The diagram below illustrates how the system works during training.
 
 
 
-=== Deep Learning, the Most and Least Important Part
+=== V1
 
-_This part, including design and coding, is heavily assisted by LLMs._
+This version produces reasonable results, but still has some problem, e.g. $f_0$ jitter.
 
 ==== Representation and Loss
 
@@ -108,28 +108,26 @@ STFT exhibits property 1, Mel-Spectrogram exhibits property 2. But after a few r
 
 This part is very random currently. I just told LLMs to analyze the potential parameter count the model need to perform the task well, then have it design a random Temporal U-Net for me.
 
-==== Optimizer
-
-Muon@jordan2024muon optimizer is used in parameters with ndim $>= 2$, and AdamW@adamw is used for the rest. As Su suggests @kexuefm-11416, Muon's update RMS is matched against AdamW's, and parameters of convolution layers are reshaped to allow $"msign"$ to operate on it.
-
-I observed a smoother loss curve for Muon-hybrid training than AdamW-only.
-
-
-== Experiments
-
-=== V1
-
-Use WORLD for pitch shift, U-Net for restoration. Produces reasonable results.
 
 - Vocoder: NSF-HiFiGAN
 - Input conditioning:
   - $f_0$ curve
-  - Per-frame ContentVec@qian2022contentvecimprovedselfsupervisedspeech
+  - Per-frame #link("https://github.com/openvpi/SingingVocoders", "ContentVec")@qian2022contentvecimprovedselfsupervisedspeech
+
+
+==== Optimizer
+
+Muon@jordan2024muon optimizer is used in parameters with ndim $>= 2$, and AdamW@adamw is used for the rest. As Su suggests @kexuefm-11416, Muon's update RMS is matched against AdamW's, and parameters of convolution layers are reshaped to allow $"msign"$ to operate on it.
+
+
+==== Others
+
+*Important*: Make sure don't seed NumPy and PyTorch manually each epoch. We don't care about reproducibility, just let system seed for us.
 
 
 === V1.5
 
-Use Rubberband for pitch shift, U-Net for restoration. Rubberband (with formant preserving option enabled) has better quality than WORLD, so it produces better results.
+Use Rubberband for pitch shift, U-Net for restoration. Rubberband (with formant preserving option enabled) has better quality than WORLD, so the system produces better results.
 
 === V1.6
 
@@ -143,16 +141,19 @@ Plot of input/output loudness distribution shows that loudness consistency is le
 
 === V1.7
 
-Previous versions merges conditions (ContentVec, $f_0$, volume) by adding, which is used by Diff-SVC@diffsvc, v1.7 uses channel concatenation.
+Previous versions merges conditions (ContentVec, $f_0$, volume) by adding, which is used by Diff-SVC@diffsvc. V1.7 switch to channel concatenation. There is no good reason; it's simply because I think addition is a bad idea to mix features.
 
-We have GT $f_0$ at inference (directly shifted by factor $2^("cents"/100)$), so the $f_0$ input to the network (U-Net, Vocoder) does not need to come from $f_0$ estimation of the artifact audio; instead we can directly use the $f_0$ estimation of the clean audio.
+We have GT $f_0$ at inference (original $f_0$ curve shifted by factor $2^("cents"/100)$), so the $f_0$ input to the network (U-Net, Vocoder) does not need to come from $f_0$ estimation of the artifact audio; instead we can directly use the $f_0$ estimation of the clean audio.
+
+==== Speeding Up Training
+
+I (actually LLM) rewrite Rubberband in Rust (because it's not suitable for GPU) and added batched & parallel processing with Rayon. Used together with data/GPU pipelining, average step time drop from 40s to 18s, which is very close to the raw rubberband process time for each step (6144 samples).
 
 === TODO: iterating more versions
 
 == Demo Product
 
 The demo is an application on macOS implemented with #link("https://github.com/emilk/egui/", "egui"). Inference is implemented with mlx@mlx, and Metal compute shaders are implemented for operations unsupported in mlx.
-
 
 
 #bibliography("refs.bib")

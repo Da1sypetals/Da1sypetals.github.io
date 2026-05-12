@@ -30,7 +30,6 @@ Tufted Blog 构建脚本
 
     uv run blog.py preview                # 启动本地预览服务器 + 文件监视（默认端口 8000）
     uv run blog.py preview -p 3000        # 自定义端口
-    uv run blog.py preview --no-open      # 不自动打开浏览器
 
     uv run blog.py new <section> <title words...>
         # 在 content/<section>/ 下新建一篇文章。section 必须已存在（不会创建新分类）。
@@ -830,15 +829,55 @@ class _ReloadBus:
 
 
 # 注入到 HTML 响应中的 SSE livereload 客户端脚本
-_LIVERELOAD_SCRIPT = b"""
+# 使用 fetch + DOM 局部替换代替 location.reload()，避免浏览器抢焦点
+_LIVERELOAD_SCRIPT = """
 <script>
 (function() {
+  function bumpStylesheets() {
+    var stamp = '?_t=' + Date.now();
+    document.querySelectorAll('link[rel="stylesheet"]').forEach(function(link) {
+      var href = link.getAttribute('href');
+      if (!href) return;
+      var clean = href.split('?')[0];
+      link.setAttribute('href', clean + stamp);
+    });
+  }
+
+  function reExecuteScripts() {
+    // Re-execute external scripts after body replacement so per-page
+    // initializers (DOMContentLoaded handlers) run again on new DOM.
+    document.querySelectorAll('script[src]').forEach(function(old) {
+      var s = document.createElement('script');
+      var src = old.getAttribute('src') || '';
+      var clean = src.split('?')[0];
+      s.src = clean + '?_t=' + Date.now();
+      s.async = false;
+      old.parentNode.insertBefore(s, old);
+      old.remove();
+    });
+  }
+
+  async function softReload() {
+    try {
+      var resp = await fetch(window.location.href, { cache: 'no-store' });
+      var html = await resp.text();
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      document.body.replaceWith(doc.body);
+      if (doc.title) document.title = doc.title;
+      bumpStylesheets();
+      reExecuteScripts();
+    } catch (e) {
+      console.warn('soft reload failed, falling back to full reload', e);
+      location.reload();
+    }
+  }
+
   var es = new EventSource('/__reload__');
-  es.addEventListener('reload', function() { location.reload(); });
-  es.onerror = function() { /* keepalive: browser will auto-reconnect */ };
+  es.addEventListener('reload', softReload);
+  es.onerror = function() { /* browser will auto-reconnect */ };
 })();
 </script>
-"""
+""".encode("utf-8")
 
 
 class _PreviewRequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -1054,8 +1093,6 @@ def preview(port: int = 8000, open_browser_flag: bool = True) -> bool:
     - 通过 SSE + 注入脚本实现保存即刷新
     - watchdog 监视源文件变化 → 自动增量构建 → 推送 reload 事件
     """
-    import webbrowser
-
     if not SITE_DIR.exists():
         print(f"  ⚠ 输出目录 {SITE_DIR} 不存在，请先运行 build 命令。")
         return False
@@ -1088,12 +1125,6 @@ def preview(port: int = 8000, open_browser_flag: bool = True) -> bool:
     print("👀 文件监视已启动：content/, config.typ, tufted-lib/, assets/")
 
     server = _ThreadingHTTPServer(("", port), handler_cls)
-
-    if open_browser_flag:
-        def _open():
-            time.sleep(0.5)
-            webbrowser.open(f"http://localhost:{port}")
-        threading.Thread(target=_open, daemon=True).start()
 
     print(f"🚀 预览服务器已启动: http://localhost:{port} （按 Ctrl+C 停止）\n")
     try:
@@ -1647,7 +1678,7 @@ if __name__ == "__main__":
         case "clean":
             success = clean()
         case "preview":
-            success = preview(getattr(args, "port", 8000), getattr(args, "open_browser", True))
+            success = preview(getattr(args, "port", 8000))
         case "new":
             title = " ".join(args.title).strip()
             success = cmd_new(args.section, title)
