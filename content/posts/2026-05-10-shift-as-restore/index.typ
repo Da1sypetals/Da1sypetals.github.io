@@ -155,5 +155,7 @@ I (actually LLM) rewrite Rubberband in Rust (because it's not suitable for GPU) 
 
 The demo is an application on macOS implemented with #link("https://github.com/emilk/egui/", "egui"). Inference is implemented with mlx@mlx, and Metal compute shaders are implemented for operations unsupported in mlx.
 
+Note extraction uses #link("https://github.com/openvpi/GAME", "GAME"). $f_0$ extraction uses FCPE@fcpe. All inference#footnote[Inference code: #link("https://github.com/Da1sypetals/game-mlx-rs/", "GAME"), #link("https://github.com/Da1sypetals/fcpe-mlx/", "FCPE")] is ported to Rust using #link("https://github.com/oxiglade/mlx-rs", "mlx-rs").
+
 
 #bibliography("refs.bib")
