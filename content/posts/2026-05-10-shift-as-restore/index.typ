@@ -1,7 +1,7 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   // title: "用音频修复的方式解决音高微调问题",
-  title: "Addressing Pitch Fine-Tuning Challenges Through Audio Restoration",
+  title: "Shift as Restore: Problem & Attempt 1",
   date: datetime(year: 2026, month: 5, day: 10),
   lang: "en",
 )
@@ -149,13 +149,12 @@ We have GT $f_0$ at inference (original $f_0$ curve shifted by factor $2^("cents
 
 I (actually LLM) rewrite Rubberband in Rust (because it's not suitable for GPU) and added batched & parallel processing with Rayon. Used together with data/GPU pipelining, average step time drop from 40s to 18s, which is very close to the raw rubberband process time for each step (6144 samples).
 
-=== TODO: iterating more versions
 
-== Demo Product
+// == Demo Product
 
-The demo is an application on macOS implemented with #link("https://github.com/emilk/egui/", "egui"). Inference is implemented with mlx@mlx, and Metal compute shaders are implemented for operations unsupported in mlx.
+// The demo is an application on macOS implemented with #link("https://github.com/emilk/egui/", "egui"). Inference is implemented with mlx@mlx, and Metal compute shaders are implemented for operations unsupported in mlx.
 
-Note extraction uses #link("https://github.com/openvpi/GAME", "GAME"). $f_0$ extraction uses FCPE@fcpe. All inference#footnote[Inference code: #link("https://github.com/Da1sypetals/game-mlx-rs/", "GAME"), #link("https://github.com/Da1sypetals/fcpe-mlx/", "FCPE")] is ported to Rust using #link("https://github.com/oxiglade/mlx-rs", "mlx-rs").
+// Note extraction uses #link("https://github.com/openvpi/GAME", "GAME"). $f_0$ extraction uses FCPE@fcpe. All inference#footnote[Inference code: #link("https://github.com/Da1sypetals/game-mlx-rs/", "GAME"), #link("https://github.com/Da1sypetals/fcpe-mlx/", "FCPE")] is ported to Rust using #link("https://github.com/oxiglade/mlx-rs", "mlx-rs").
 
 
 #bibliography("refs.bib")

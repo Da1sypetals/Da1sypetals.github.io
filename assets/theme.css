@@ -227,7 +227,7 @@ article.post > section {
 
 article.post > section .post-date ~ h3 {
     counter-increment: h3;
-    counter-reset: h4 h5 h6;
+    counter-set: h4 0 h5 0 h6 0;
 }
 
 article.post > section .post-date ~ h3::before {
@@ -236,7 +236,7 @@ article.post > section .post-date ~ h3::before {
 
 article.post > section .post-date ~ h4 {
     counter-increment: h4;
-    counter-reset: h5 h6;
+    counter-set: h5 0 h6 0;
 }
 
 article.post > section .post-date ~ h4::before {
@@ -245,7 +245,7 @@ article.post > section .post-date ~ h4::before {
 
 article.post > section .post-date ~ h5 {
     counter-increment: h5;
-    counter-reset: h6;
+    counter-set: h6 0;
 }
 
 article.post > section .post-date ~ h5::before {
