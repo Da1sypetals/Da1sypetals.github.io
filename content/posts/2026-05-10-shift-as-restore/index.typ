@@ -10,7 +10,7 @@
 
 == Demo网页
 
-#link("https://vococo.pages.woa.com/")
+#link("https://vococo.vercel.app/")
 
 #figure(image("image.png"))
 
@@ -54,13 +54,13 @@
 
 === 表示形式
 
-文献中广泛使用的STFT的表示形式就有多种，包括 $(\mathrm{Re}, \mathrm{Im})$，$(A, \varphi)$，等等。
+文献中广泛使用的STFT的表示形式就有多种，包括 $("Re", "Im")$，$(A, phi)$，等等。
 
-首先排除的是 $(A, \varphi)$，由于具有phase wrapping的问题，导致不适合深度学习。phase wrapping 是说相位 $\varphi$ 的取值在 $(-\pi, \pi]$，本质上是一个圆周而不是一条直线：当真实相位是 $\pi - \varepsilon$ 而预测是 $-\pi + \varepsilon$ 时，二者在圆上其实只差 $2\varepsilon$，但是直接拿欧氏 loss 算 $|\varphi - \hat\varphi|$ 会得到 $2\pi - 2\varepsilon$，瞬间变成一个巨大的惩罚；同样，相邻 bin 的相位本来在物理上是连续的，但只要有一处跨过 $\pm\pi$ 边界，数值上就会发生一次 $2\pi$ 的跳变。把这种圆周拓扑硬塞到 MSE/L1 这种平直空间上的回归 loss 里，梯度方向是错的（驱使模型绕远路而不是走最短弧），优化也不稳定，所以这种方法不行。
+首先排除的是 $(A, phi)$，由于具有phase wrapping的问题，导致不适合深度学习。phase wrapping 是说相位 $phi$ 的取值在 $(-pi, pi]$，本质上是一个圆周而不是一条直线：当真实相位是 $pi - epsilon$ 而预测是 $-pi + epsilon$ 时，二者在圆上其实只差 $2 epsilon$，但是直接拿欧氏 loss 算 $|phi - hat(phi)|$ 会得到 $2 pi - 2 epsilon$，瞬间变成一个巨大的惩罚；同样，相邻 bin 的相位本来在物理上是连续的，但只要有一处跨过 $+-\ pi$ 边界，数值上就会发生一次 $2 pi$ 的跳变。把这种圆周拓扑硬塞到 MSE/L1 这种平直空间上的回归 loss 里，梯度方向是错的（驱使模型绕远路而不是走最短弧），优化也不稳定，所以这种方法不行。
 
-通过实验发现，$(\mathrm{Re}, \mathrm{Im})$ 表示学习其实也挺困难的，经常会发生，因为相位出错。导致被loss惩罚，但是最后惩罚的结果却不是旋转（改变相位），而是把负数的模惩罚的越变越小等问题，不太稳定。
+通过实验发现，$("Re", "Im")$ 表示学习其实也挺困难的，经常会发生，因为相位出错。导致被loss惩罚，但是最后惩罚的结果却不是旋转（改变相位），而是把负数的模惩罚的越变越小等问题，不太稳定。
 
-后来想到了 $(A, \cos\varphi, \sin\varphi)$ 这种方式，不强制约束后两个数的平方和为一，而是通过一个loss去惩罚它，让网络自己学到，在二维平面上把这个点从高斯分布的任意采样流动到单位圆上的目标点。
+后来想到了 $(A, cos phi, sin phi)$ 这种方式，不强制约束后两个数的平方和为一，而是通过一个loss去惩罚它，让网络自己学到，在二维平面上把这个点从高斯分布的任意采样流动到单位圆上的目标点。
 
 目标点在单位圆上，所有目标点之间的线性插值可能经过的点的集合就是所有目标点的凸包，单位圆的凸包就是单位圆。因此，训练的路径应当尽可能经过单位圆的任何地方，避免发生OOD。
 
@@ -80,11 +80,11 @@ WORLD的缺点就是会偶尔出现嘶哑导致神经网络完全恢复不过来
 
 生成部分用 conditional flow matching：
 
-- 目标 $z_1 = (\mathrm{mag}^{0.3}, \cos\varphi, \sin\varphi)$，从 clean 音频的 STFT 直接算出
+- 目标 $z_1 = ("mag"^(0.3), cos phi, sin phi)$，从 clean 音频的 STFT 直接算出
 - 起点 $z_0$：mag 通道用标准正态，phase 两个通道用前一节给出的"标准差 ~0.4、模在 1.125 处截断的二维高斯"
-- 在 masked 帧上构造线性路径 $z_t = (1-t)\,z_0 + t\,z_1$，$t \sim \mathcal{U}(0,1)$；context 帧固定 $z_t = z_1$，不参与 flow
-- velocity target $v = z_1 - z_0$，loss 是预测速度 $\hat v$ 与 $v$ 的 MSE，只在 masked 帧上累加；mag 通道和 phase 通道分开统计，phase loss 在前面若干步用 $w=(\mathrm{step}/W)^3$ 的 warmup 慢慢拉起来
-- 模型输入沿通道维 concat：$[z_t\ (3\text{ch}),\ \mathrm{DSP\ artifact\ STFT}\ (3\text{ch}),\ \text{mask}\ (1\text{ch})]$，artifact 通道在 unmasked 帧填零，mask=1 表示该帧需要修复
+- 在 masked 帧上构造线性路径 $z_t = (1 - t) z_0 + t z_1$，$t tilde cal(U)(0,1)$；context 帧固定 $z_t = z_1$，不参与 flow
+- velocity target $v = z_1 - z_0$，loss 是预测速度 $hat(v)$ 与 $v$ 的 MSE，只在 masked 帧上累加；mag 通道和 phase 通道分开统计，phase loss 在前面若干步用 $w = ("step" / W)^3$ 的 warmup 慢慢拉起来
+- 模型输入沿通道维 concat：$[z_t\ "3ch",\ "DSP artifact STFT"\ "3ch",\ "mask"\ "1ch"]$，artifact 通道在 unmasked 帧填零，mask=1 表示该帧需要修复
 - DSP transition 边界（pitch envelope 拐点附近）的帧给到 4× 权重，因为这一段幅度也被 DSP 破坏得最厉害
 
 为了让模型学到"输入已经是好的就不要改"，5% 的样本强制 artifact = clean（identity 样本），mask 仍然正常采样。
@@ -102,8 +102,8 @@ WORLD的缺点就是会偶尔出现嘶哑导致神经网络完全恢复不过来
 
 === Loss
 
-- Magnitude: MSE, $L_{A}=\left(A-\hat{A}\right)^{2}$
-- Phase: Square of euclidean distance, $L_{\varphi}=(\cos \varphi-\hat{x})^{2}+(\sin \varphi-\hat{y})^2$
+- Magnitude: MSE, $L_A = (A - hat(A))^2$
+- Phase: Square of euclidean distance, $L_phi = (cos phi - hat(x))^2 + (sin phi - hat(y))^2$
 
 === 数据
 
@@ -119,7 +119,7 @@ Flow matching通过4~16步的ODE积分，从高斯噪声积分到预测音频。
 ```
 ## 移植
 
-现在我希望把sar的推理 1:1 用Rust的mlx-rs复刻。 
+现在我希望把sar的推理 1:1 用Rust的mlx-rs复刻。
 原代码目录：sar/impl/v5
 port目录：src/sar , 示例推理写在一个example里面。
 参考Python的实现进行推理；但是r3r使用和当前项目相同的库；
