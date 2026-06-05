@@ -1,47 +1,3 @@
-#!/usr/bin/env -S uv run
-# /// script
-# requires-python = ">=3.10"
-# dependencies = ["watchdog"]
-# ///
-
-"""
-Tufted Blog 构建脚本
-
-将 content/ 下的 Typst (.typ) 源文件编译为 HTML（部分文件名含 "pdf" 的同时编译为 PDF），
-并将静态资源复制到 _site/ 输出目录。
-
-特性
-----
-- 增量编译：根据文件修改时间只重新编译变更的页面
-- 自动生成分类首页：扫描 content/<section>/ 下所有文章子目录的元数据，
-  在内存中拼出该分类的首页 typst 源码并直接编译到 _site/<section>/index.html，
-  不在文件系统中留下中间产物
-- 自动生成 sitemap.xml / robots.txt / RSS feed
-- 预览服务器集成 watchdog：保存源文件后自动增量重建并触发 livereload 刷新
-
-用法
-----
-    uv run blog.py build                  # 完整构建（HTML + PDF + 资源 + 分类页 + sitemap/RSS）
-    uv run blog.py build --force          # 强制全量重建（先 clean 再 build）
-    uv run blog.py html                   # 仅编译 HTML
-    uv run blog.py pdf                    # 仅编译 PDF
-    uv run blog.py assets                 # 仅复制静态资源
-    uv run blog.py clean                  # 清理 _site/
-
-    uv run blog.py preview                # 启动本地预览服务器 + 文件监视（默认端口 8000）
-    uv run blog.py preview -p 3000        # 自定义端口
-
-    uv run blog.py new <section> <title words...>
-        # 在 content/<section>/ 下新建一篇文章。section 必须已存在（不会创建新分类）。
-        # 文章目录名为 YYYY-MM-DD-<slug>，date 自动填今天。
-        # 示例：uv run blog.py new art this is my title
-
-也可以直接使用 Python 运行（脚本会通过 PEP 723 头自动安装依赖；用 python 运行时
-需自行确保 watchdog 已安装）：
-    python blog.py build
-    python blog.py preview -p 3000
-"""
-
 import argparse
 import http.server
 import io
@@ -143,9 +99,7 @@ class HTMLMetadataParser(HTMLParser):
         if tag == "title":
             self._in_title = False
         elif tag == "a" and self._in_site_nav and self._current_nav_href is not None:
-            self.metadata["nav_links"].append(
-                (self._current_nav_href, self._current_nav_text)
-            )
+            self.metadata["nav_links"].append((self._current_nav_href, self._current_nav_text))
             self._current_nav_href = None
         elif tag == "nav" and self._in_site_nav:
             self._in_site_nav = False
@@ -1059,7 +1013,24 @@ class RebuildHandler:
 
     def _should_rebuild(self, path: str) -> bool:
         return path.endswith(
-            (".typ", ".css", ".js", ".md", ".bib", ".yml", ".yaml", ".json", ".webp", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".pdf")
+            (
+                ".typ",
+                ".css",
+                ".js",
+                ".md",
+                ".bib",
+                ".yml",
+                ".yaml",
+                ".json",
+                ".webp",
+                ".png",
+                ".jpg",
+                ".jpeg",
+                ".gif",
+                ".svg",
+                ".ico",
+                ".pdf",
+            )
         )
 
     def dispatch(self, event):
@@ -1325,8 +1296,7 @@ def find_auto_section_dirs() -> list[Path]:
             continue
         # 判断是否有"文章子目录"
         has_article = any(
-            child.is_dir() and (child / "index.typ").exists()
-            for child in section_dir.iterdir()
+            child.is_dir() and (child / "index.typ").exists() for child in section_dir.iterdir()
         )
         if has_article:
             sections.append(section_dir)
@@ -1372,9 +1342,7 @@ def _typst_string_literal(s: str) -> str:
     return f'"{escaped}"'
 
 
-def _render_section_typ(
-    section_name: str, display_name: str, posts: list[dict]
-) -> str:
+def _render_section_typ(section_name: str, display_name: str, posts: list[dict]) -> str:
     """
     生成一段 Typst 源码，用于编译该分类的首页。
 
@@ -1489,26 +1457,56 @@ def slugify(title: str) -> str:
     return s
 
 
-def cmd_new(section: str, title: str) -> bool:
+def cmd_new() -> bool:
     """
-    新建一篇文章。
+    交互式新建一篇文章。
 
-    参数:
-        section: 分类目录名（必须已存在于 content/ 下）
-        title:   文章标题（原始，空格连接的 argv 剩余部分）
+    列出所有可用的分类目录，让用户选择分类并输入标题。
     """
-    if not section:
-        print("❌ 缺少分类名。")
+    # 列出所有可用的分类目录
+    sections = [
+        d.name
+        for d in sorted(CONTENT_DIR.iterdir())
+        if d.is_dir() and not d.name.startswith("_")
+    ]
+    if not sections:
+        print("❌ content/ 下没有可用的分类目录。")
         return False
-    if not title.strip():
-        print("❌ 缺少文章标题。")
-        return False
+
+    print("可用的分类：")
+    for i, name in enumerate(sections, 1):
+        print(f"  {i}. {name}")
+
+    # 选择分类
+    while True:
+        try:
+            choice = input("\n请选择分类（输入序号或名称）: ").strip()
+            if choice.isdigit():
+                idx = int(choice) - 1
+                if 0 <= idx < len(sections):
+                    section = sections[idx]
+                    break
+            elif choice in sections:
+                section = choice
+                break
+            print(f"  ⚠ 无效选择，请重新输入（1-{len(sections)} 或分类名称）")
+        except (EOFError, KeyboardInterrupt):
+            print("\n取消")
+            return False
+
+    # 输入标题
+    while True:
+        try:
+            title = input("请输入文章标题: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\n取消")
+            return False
+        if not title:
+            print("  ⚠ 标题不能为空")
+            continue
+        break
 
     section_dir = CONTENT_DIR / section
-    if not section_dir.is_dir():
-        print(f"❌ 分类 '{section}' 不存在：{section_dir}")
-        print(f"   不自动创建新分类。请先手动创建 {section_dir}/ 或选择已有分类。")
-        return False
 
     slug_body = slugify(title)
     if not slug_body:
@@ -1597,20 +1595,6 @@ def create_parser() -> argparse.ArgumentParser:
         prog="blog.py",
         description="Tufted Blog 构建脚本 - 将 content 中的 Typst 文件编译为 HTML 和 PDF",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-构建脚本默认只重新编译修改过的文件，可使用 -f/--force 选项强制完整重建：
-    uv run blog.py build --force
-    或 python blog.py build -f
-
-使用 preview 命令启动本地预览服务器：
-    uv run blog.py preview
-    或 python blog.py preview -p 3000  # 使用自定义端口
-
-新建文章：
-    uv run blog.py new art this is my title
-
-更多信息请参阅 README.md
-""",
     )
 
     subparsers = parser.add_subparsers(dest="command", title="可用命令", metavar="<command>")
@@ -1628,9 +1612,7 @@ def create_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("clean", help="清理生成的文件")
 
     preview_parser = subparsers.add_parser("preview", help="启动本地预览服务器")
-    preview_parser.add_argument(
-        "-p", "--port", type=int, default=8000, help="服务器端口号（默认: 8000）"
-    )
+    preview_parser.add_argument("-p", "--port", type=int, default=8000, help="服务器端口号（默认: 8000）")
     preview_parser.add_argument(
         "--no-open", action="store_false", dest="open_browser", help="不自动打开浏览器"
     )
@@ -1638,13 +1620,7 @@ def create_parser() -> argparse.ArgumentParser:
 
     new_parser = subparsers.add_parser(
         "new",
-        help="新建一篇文章：uv run blog.py new <section> <title words...>",
-    )
-    new_parser.add_argument("section", help="分类名，例如 art / posts / english-post")
-    new_parser.add_argument(
-        "title",
-        nargs=argparse.REMAINDER,
-        help="文章标题（用空格分隔的多个词，按原样拼接）",
+        help="交互式新建一篇文章",
     )
 
     return parser
@@ -1680,8 +1656,7 @@ if __name__ == "__main__":
         case "preview":
             success = preview(getattr(args, "port", 8000))
         case "new":
-            title = " ".join(args.title).strip()
-            success = cmd_new(args.section, title)
+            success = cmd_new()
         case _:
             print(f"❌ 未知命令: {args.command}")
             success = False

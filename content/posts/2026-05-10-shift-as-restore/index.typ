@@ -6,155 +6,151 @@
   lang: "en",
 )
 
+本文AI辅助内容极少，仅部分公式的LaTeX代码由AI生成，请放心阅读😂 当然，代码实现部分的AI率已经飙升到接近100%
 
-== Background
+== Demo网页
 
-Research on vocal performance differs significantly from other forms of art. The consumption of vocal music is human-centered: consumers tend to associate a vocal performance with a particular artist, rather than treating each song as an independent piece. This stands in stark contrast to the consumption of visual art design or instrumental music.
+#link("https://vococo.pages.woa.com/")
 
-Additionally, the following observations are relevant:
+#figure(image("image.png"))
 
-- Fine pitch shift remains an important problem in vocal music production, as companies that make this kind of software continue to be profitable. As far as I know, deep learning is not the core of their proprietary algorithms.
+实际效果比WORLD较好，但是听起来并没有完美无瑕，肯定是比不上Melodyne的，还需更多研究...
 
-- Typical pitch shifts are within a small range (say, $plus.minus 200 "cents"$). If your singing deviates from the expected pitch too much, you may need to practice singing instead of looking for software to tune it.
+== 目标
 
-Based on these observations, I conclude that fine control is more important than end-to-end systems in the refinement of vocal performance. Therefore, even though the whole industry is focused on end-to-end models, a system that allows fine control over the pitch of each note remains valuable.
+可以先了解一下Melodyne这个软件。Melodyne 是 Celemony 出的一款单声部人声/单音乐器的音高与时长编辑器，核心交互是把一段音频在钢琴卷帘上以"音符块"的形式可视化：每个音符可以单独被拖动中心音高、重绘 F0 曲线、压缩或拉伸时长、调整颤音深度，也可以在 attack 处加滑入滑出。本文要做的事情，可以理解为：尝试用神经网络去替换 Melodyne 内部把"被你拖过的音符"渲染回音频的那个引擎。
 
-== Design
+我主要是因为开源的软件的功能完全没有能够匹配Melodyne那种生成质量(更不必说功能，但是我打算先从生成质量说起)。开源的不基于神经网络所工作的结果基本上没有办法听；基于神经网络的工作的结果也有没有达到可以用于录音制作的质量。
 
-=== Data
+目标：给一个人声音频片段，往往是唱得略不够好，没有到音准的歌声，然后对其中的某些音符进行音高微调；或者是对其F0曲线进行重绘。
 
-Given the copyright nature of production-level music, it is extremely difficult to find high quality vocal stem, and there is basically no source of paired (before pitch shift, after pitch shift) data. Given this challenge, modeling this problem as supervised lerning is unrealistic, and we are forced to come up with a self-supervised (or unsupervised) approach.
+=== 为什么
 
-==== DSP algorithms come to our rescue
+个人审美问题。
 
-Existing non-DL#footnote[Deep Learning] DSP algorithms, such as phase vocoders, WORLD@world, and time-domain pitch shifters (e.g., Rubberband), provide formant-preserving ways to shift pitch. They work reasonably well when artificial timbre changes are expected or even desired. However, for my vocal fine-tuning scenario, these methods inevitably introduce audible artifacts, like metallic ringing, phasiness, and unnatural formant smearing.
+我个人对全自动音高修正没有兴趣，主要原因是
 
-But this distortion is not chaotic; it follows a fixed, algorithm-dependent transform. The key observation is that the shifted audio from a traditional DSP algorithm can be treated as a distorted version of a hypothetical “cleanly restored” audio. This gives us a self-supervised path: we can deliberately create such distorted audio by chaining two opposite pitch shifts (with the same DSP engine) and then train a neural network to revert the distortion, effectively learning to restore the original quality without requiring paired before/after data.
+1.我自己也唱歌
+2.神经网络不可能识别人的所有意图，有的音没唱准是艺术处理，有的音没唱准是真的没唱准，而我想要尽可能的自由度
+3.我觉得歌声音乐的消费主要还是以人为中心的，全自动音高修正就已经往虚拟歌手方向狂飙了
 
+主要还是因为我喜欢。
 
+== 问题
 
-=== Modeling
+这个任务虽然说可以以一种非常显然的方式建模为监督学习的任务，但是从配对的角度上来看，这种数据根本就不存在：理想中的配对数据应当是 "略走音的演唱 ->同一句话唱准音的版本"，但是不会有人专门为了同一段演唱录两版（一版故意走音、一版照着编辑结果重新唱回去）；就算录了，每次发声的呼吸、共振峰、瞬态噪声都不一样，本质上是两段不同的演唱，而不是同一段音频的"修音前后"。公开数据集（OpenCpop、PJS、ItakoSing、OpenSinger、CCMusic 等）都是单版本（不论是否唱准）的录音，没有标注告诉你"这一段应当被改成什么样子"。
 
-// todo: a sentence or two to lead to the flowchart.
+而且从现在的深度学习方式来看，大家都希望利用海量的质量较高，但是没有监督信号的信息，这样就不需要对数据进行标注，而只需要进行清洗。
 
-The diagram below illustrates how the system works during training.
+因此从推理角度出发，我的想法是先经过一个传统算法的DSP（比如WORLD，rubberband等等）对音高微调之后的那一段音频进行粗略估计，然后再用神经网络进行修复。
 
-#figure(image("flowchart.png"), caption: "Flow chart of the modeling method")
+数据就可以如此构造：对变调的部分应用两次相反方向的DSP（比如一次是升调，一次是把升的部分降回去）为x，原始音频为y，这样就构造出了配对数据。
 
-// ```mermaid
-// flowchart LR
-//     %% Top row
-//     RA([Restored Audio])
-//     NN[NN]
+实际上这个任务还有一个非常核心的问题，就是：人对于一段音频，音色是否一致？是否符合自然的人声？是否好听？目前是没有一个好的公式去量化它的。也正是因此，我选择了生成式模型的方式
 
-//     %% Middle row
-//     IA([Input Audio])
-//     RB1["Rubberband<br/>(pitch shift)"]
-//     SA([Shifted audio])
-//     RB2["Rubberband<br/>(pitch shift)"]
-//     DA([Distorted Audio])
+== 输入
 
-//     %% Bottom row
-//     PE(["Pitch Envelope<br/>(keyframes +<br/>lerp between frames)"])
-//     NEG["-"]
-//     INV([Inverted Pitch Envelope])
+根据对音频深度学习的文献的调研，音频深度学习一般不会在时域上进行，而是会在时频谱上进行。调研大量的开源文献之后，由于个人审美的缘故，不愿意引入人为设计的先验特征，最终选取了complex stft作为输入输出的表示域。
 
-//     %% Main flow
-//     IA --> RB1 --> SA --> RB2 --> DA
+=== 表示形式
 
-//     %% Loss connection
-//     RA <-->|Loss| IA
+文献中广泛使用的STFT的表示形式就有多种，包括 $(\mathrm{Re}, \mathrm{Im})$，$(A, \varphi)$，等等。
 
-//     %% Pitch envelope routing
-//     PE --> RB1
-//     PE --> NEG --> INV
-//     INV --> RB2
+首先排除的是 $(A, \varphi)$，由于具有phase wrapping的问题，导致不适合深度学习。phase wrapping 是说相位 $\varphi$ 的取值在 $(-\pi, \pi]$，本质上是一个圆周而不是一条直线：当真实相位是 $\pi - \varepsilon$ 而预测是 $-\pi + \varepsilon$ 时，二者在圆上其实只差 $2\varepsilon$，但是直接拿欧氏 loss 算 $|\varphi - \hat\varphi|$ 会得到 $2\pi - 2\varepsilon$，瞬间变成一个巨大的惩罚；同样，相邻 bin 的相位本来在物理上是连续的，但只要有一处跨过 $\pm\pi$ 边界，数值上就会发生一次 $2\pi$ 的跳变。把这种圆周拓扑硬塞到 MSE/L1 这种平直空间上的回归 loss 里，梯度方向是错的（驱使模型绕远路而不是走最短弧），优化也不稳定，所以这种方法不行。
 
-//     %% Neural network restoration
-//     DA --> NN --> RA
+通过实验发现，$(\mathrm{Re}, \mathrm{Im})$ 表示学习其实也挺困难的，经常会发生，因为相位出错。导致被loss惩罚，但是最后惩罚的结果却不是旋转（改变相位），而是把负数的模惩罚的越变越小等问题，不太稳定。
 
-//     %% Styles
-//     classDef input fill:#efe3b0,stroke:#d4a000,stroke-width:2px,color:#000;
-//     classDef middle fill:#f3dfc7,stroke:#d89b00,stroke-width:2px,color:#000;
-//     classDef green fill:#cdddc9,stroke:#6aa84f,stroke-width:2px,color:#000;
-//     classDef red fill:#e9c7c7,stroke:#c0504d,stroke-width:2px,color:#000;
+后来想到了 $(A, \cos\varphi, \sin\varphi)$ 这种方式，不强制约束后两个数的平方和为一，而是通过一个loss去惩罚它，让网络自己学到，在二维平面上把这个点从高斯分布的任意采样流动到单位圆上的目标点。
 
-//     class IA,PE input;
-//     class RA,SA,DA,INV middle;
-//     class RB1,RB2,NEG green;
-//     class NN red;
-// ```
+目标点在单位圆上，所有目标点之间的线性插值可能经过的点的集合就是所有目标点的凸包，单位圆的凸包就是单位圆。因此，训练的路径应当尽可能经过单位圆的任何地方，避免发生OOD。
 
+采样分布先确定为二维高斯分布，然后约束为在单位圆内的概率质量为0.95，这样可以确定出标准差大约为0.4左右。由于浮点计算精度的问题，有可能会略微超出单位圆的范围，因此允许采样点的模大于单位圆一些，这里取1/8，就得出了最终分布为一个二维的标准差大约为0.4的高斯分布在模为1.125处截断。实验发现，这样直接比使用二维的标准正态分布的收敛快很多。
 
+=== DSP
 
-=== V1
+实验中rubberband和WORLD都试过，也都训了相应的网络；
 
-This version produces reasonable results, but still has some problem, e.g. $f_0$ jitter.
+虽然rubberband质量较好但是rubberband的可调节f0的帧率看起来不够；而且无极调节f0也不是它支持很好的功能
 
-==== Representation and Loss
+WORLD的缺点就是会偶尔出现嘶哑导致神经网络完全恢复不过来
 
-I studied this part intensely, but the final solution was a compromising one.
+== 学习范式：Flow Matching + BERT
 
-The desired representation should exhibit:
+把任务建模成"在 STFT 序列上做局部填空"。一段时长 T 帧的 clean STFT 序列被切成两类：context 帧（用户没动过、保留 clean）和 masked 帧（用户在 Melodyne 上拖过的那些音符所覆盖的帧）。模型只在 masked 帧上重新生成 STFT，同时可以双向看到两侧 context 帧的真实 clean 频谱——这正是 BERT 风格 masked language modeling 的直接搬运，区别只是把判别式的 token 分类换成对连续向量的生成。
 
-+ Bidirectionally-covertible between the representation and high-quality waveform, preferablly mathematically invertible
-+ Deep-Learning friendly, pattern is easy for neural network to learn
+生成部分用 conditional flow matching：
 
-STFT exhibits property 1, Mel-Spectrogram exhibits property 2. But after a few rounds of experiments, either caused by insufficient data or the inherent properties of STFT, performance of NN learning on Mel-spectrogram outperform STFT massively.
+- 目标 $z_1 = (\mathrm{mag}^{0.3}, \cos\varphi, \sin\varphi)$，从 clean 音频的 STFT 直接算出
+- 起点 $z_0$：mag 通道用标准正态，phase 两个通道用前一节给出的"标准差 ~0.4、模在 1.125 处截断的二维高斯"
+- 在 masked 帧上构造线性路径 $z_t = (1-t)\,z_0 + t\,z_1$，$t \sim \mathcal{U}(0,1)$；context 帧固定 $z_t = z_1$，不参与 flow
+- velocity target $v = z_1 - z_0$，loss 是预测速度 $\hat v$ 与 $v$ 的 MSE，只在 masked 帧上累加；mag 通道和 phase 通道分开统计，phase loss 在前面若干步用 $w=(\mathrm{step}/W)^3$ 的 warmup 慢慢拉起来
+- 模型输入沿通道维 concat：$[z_t\ (3\text{ch}),\ \mathrm{DSP\ artifact\ STFT}\ (3\text{ch}),\ \text{mask}\ (1\text{ch})]$，artifact 通道在 unmasked 帧填零，mask=1 表示该帧需要修复
+- DSP transition 边界（pitch envelope 拐点附近）的帧给到 4× 权重，因为这一段幅度也被 DSP 破坏得最厉害
 
-*For now* Mel-spectrogram is used, but I am still very interested in designing audio representation that has good enough theoretical properties, and will keep investigating.
+为了让模型学到"输入已经是好的就不要改"，5% 的样本强制 artifact = clean（identity 样本），mask 仍然正常采样。
 
-==== Network
+训练数据据此天然成对：clean 音频 $y$ 提供 $z_1$；对 $y$ 整段跑 DSP（先变调再变回来）得到 artifact $x$ 作为条件；mask 区间从 DSP envelope 的若干段里随机选 2~6 段、再做 ±50ms 中心抖动后合并。
 
-This part is very random currently. I just told LLMs to analyze the potential parameter count the model need to perform the task well, then have it design a random Temporal U-Net for me.
+== 网络结构
 
+这部分其实不是很重要，最主要的几个点就是：
+- 时间轴方向需要有局部关联，代表这一小段音频和前后的连接关系；也可能可以有全局关联，可能可以建模音色的一致性。
+- 由于所有（开源的）传统方法给出的听觉结果都不是特别好，倾向于认为频率轴上不应该添加人类的先验进去，于是就直接使用了带inductive bias最少的Attention。
+- 时间用AdaLN0注入，f0在第一层和最后一层通过通道concat注入。
 
-- Vocoder: NSF-HiFiGAN
-- Input conditioning:
-  - $f_0$ curve
-  - Per-frame #link("https://github.com/openvpi/SingingVocoders", "ContentVec")@qian2022contentvecimprovedselfsupervisedspeech
+== 其他
 
+=== Loss
 
-==== Optimizer
+- Magnitude: MSE, $L_{A}=\left(A-\hat{A}\right)^{2}$
+- Phase: Square of euclidean distance, $L_{\varphi}=(\cos \varphi-\hat{x})^{2}+(\sin \varphi-\hat{y})^2$
 
-Muon@jordan2024muon optimizer is used in parameters with ndim $>= 2$, and AdamW@adamw is used for the rest. As Su suggests @kexuefm-11416, Muon's update RMS is matched against AdamW's, and parameters of convolution layers are reshaped to allow $"msign"$ to operate on it.
+=== 数据
 
+包括opencpop, 两个日语数据集，ccmusic，vocal92，以及一些自己去5sing、b站爬的片段，以及一些自己唱的片段...但是数据量很小，总共加起来也只有50h左右。
 
-==== Others
+=== 推理
 
-*Important*: Make sure don't seed NumPy and PyTorch manually each epoch. We don't care about reproducibility, just let system seed for us.
+Flow matching通过4~16步的ODE积分，从高斯噪声积分到预测音频。
 
+这种软件在命令行或者编程的方式使用其实很不方便，因此我移植了一份到苹果的GPU上，使用苹果机器学习框架MLX的Rust绑定实现。
 
-=== V1.5
+这部分完全让LLM参考PyTorch的实现编写，使用的模型是Cursor Composer 2.5。Prompt如下：
+```
+## 移植
 
-Use Rubberband for pitch shift, U-Net for restoration. Rubberband (with formant preserving option enabled) has better quality than WORLD, so the system produces better results.
+现在我希望把sar的推理 1:1 用Rust的mlx-rs复刻。 
+原代码目录：sar/impl/v5
+port目录：src/sar , 示例推理写在一个example里面。
+参考Python的实现进行推理；但是r3r使用和当前项目相同的库；
 
-=== V1.6
+包括所有完整的预处理、后处理逻辑和整个深度学习模型的全部内容。
+注意：
+- 不允许进行任何的简化，这是一个生产上需要使用的，为了抛弃Python运行时的移植；
+- 不允许改变任何逻辑，包括数值精度、运算使用的类型等等。同时你应该和原本的PyTorch实现打印日志对齐每一步的精度，因为部分mlx-rs的API即使输入相同，输出也和Python的API不同，可能体现在
+    - 维度顺序定义的不同；
+    - 精度的不同；
+    - 等等...
+- mlx实现的输出结果应当和Python的torch实现在精度允许范围内完全对齐
+    - 不允许“为了通过测试”而无限制的降低精度要求。
+- 不允许为了实现方便做任何的妥协。
 
-Enhanced data preparation and loss weights:
+=== 备注
+所有依赖都必须使用cargo add添加，若非必要，不能修改manifest文件。
+如果你发现你使用的API无法编译通过，这说明你的训练数据是陈旧版本的库，你应该查阅源码，获取新的API，不允许通过降级依赖库来通过编译。
 
-Transition segments (whose $f_0$ is not consistent in a small time window) produces more intense aritfacts, I give transition frames $16 times$ loss weight.
+mlx-rs使用这个版本：
+mlx-rs = { git = "https://github.com/blossom-slopware/mlx-rs.git", rev = "b81194a47c2c6ba4ecb0cf370e4f0d941f52dd5d", features = ["accelerate", "metal"] }
+每次需要使用mlx-rs的API的时候，你必须要先阅读源码，然后再写代码.直接写代码几乎肯定会出错.
+禁止使用程序化的方式修改任何代码，包括heredocs，python脚本，sed，等等一切方式。
+```
 
-Plot of input/output loudness distribution shows that loudness consistency is learned, but difference $>3 "db"$ is still observed. Therefore auxiliary loss to penalize loudness difference with weight $lambda_"loudness"=1/16$ is added as an attempt to alleviate this probelm.
+然后用Rust egui实现了一个GUI界面。其中F0检测使用的模型是FCPE，歌声转MIDI使用的模型是GAME。
 
-#figure(image("loudness.png"))
+== 项目
 
-=== V1.7
+#link("https://git.woa.com/daisyjguo/sar-train")
 
-Previous versions merges conditions (ContentVec, $f_0$, volume) by adding, which is used by Diff-SVC@diffsvc. V1.7 switch to channel concatenation. There is no good reason; it's simply because I think addition is a bad idea to mix features.
+如果有类似想法，或者对这个想法有兴趣的同学，想交流一下，期待留言or直接私信我🌹
 
-We have GT $f_0$ at inference (original $f_0$ curve shifted by factor $2^("cents"/100)$), so the $f_0$ input to the network (U-Net, Vocoder) does not need to come from $f_0$ estimation of the artifact audio; instead we can directly use the $f_0$ estimation of the clean audio.
-
-==== Speeding Up Training
-
-I (actually LLM) rewrite Rubberband in Rust (because it's not suitable for GPU) and added batched & parallel processing with Rayon. Used together with data/GPU pipelining, average step time drop from 40s to 18s, which is very close to the raw rubberband process time for each step (6144 samples).
-
-
-// == Demo Product
-
-// The demo is an application on macOS implemented with #link("https://github.com/emilk/egui/", "egui"). Inference is implemented with mlx@mlx, and Metal compute shaders are implemented for operations unsupported in mlx.
-
-// Note extraction uses #link("https://github.com/openvpi/GAME", "GAME"). $f_0$ extraction uses FCPE@fcpe. All inference#footnote[Inference code: #link("https://github.com/Da1sypetals/game-mlx-rs/", "GAME"), #link("https://github.com/Da1sypetals/fcpe-mlx/", "FCPE")] is ported to Rust using #link("https://github.com/oxiglade/mlx-rs", "mlx-rs").
-
-
-#bibliography("refs.bib")
+（除了音频深度学习，其实我对唱歌本身同样喜欢）
