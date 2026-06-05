@@ -1,7 +1,7 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   // title: "用音频修复的方式解决音高微调问题",
-  title: "Shift as Restore: Problem & Attempt 1",
+  title: "Shift as Restore: Problem & Attempt",
   date: datetime(year: 2026, month: 5, day: 10),
   lang: "en",
 )
@@ -147,10 +147,3 @@ mlx-rs = { git = "https://github.com/blossom-slopware/mlx-rs.git", rev = "b81194
 
 然后用Rust egui实现了一个GUI界面。其中F0检测使用的模型是FCPE，歌声转MIDI使用的模型是GAME。
 
-== 项目
-
-#link("https://git.woa.com/daisyjguo/sar-train")
-
-如果有类似想法，或者对这个想法有兴趣的同学，想交流一下，期待留言or直接私信我🌹
-
-（除了音频深度学习，其实我对唱歌本身同样喜欢）
