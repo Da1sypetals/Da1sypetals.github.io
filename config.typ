@@ -5,6 +5,7 @@
     "/posts/": "知识",
     "/art/": "文化",
     "/documents/": "文档",
+    "/llm-chats/": "精选LLM对话",
     "/": "About",
   ),
 
