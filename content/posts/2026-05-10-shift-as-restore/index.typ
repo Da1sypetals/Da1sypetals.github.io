@@ -84,7 +84,7 @@ WORLD的缺点就是会偶尔出现嘶哑导致神经网络完全恢复不过来
 - 起点 $z_0$：mag 通道用标准正态，phase 两个通道用前一节给出的"标准差 ~0.4、模在 1.125 处截断的二维高斯"
 - 在 masked 帧上构造线性路径 $z_t = (1 - t) z_0 + t z_1$，$t tilde cal(U)(0,1)$；context 帧固定 $z_t = z_1$，不参与 flow
 - velocity target $v = z_1 - z_0$，loss 是预测速度 $hat(v)$ 与 $v$ 的 MSE，只在 masked 帧上累加；mag 通道和 phase 通道分开统计，phase loss 在前面若干步用 $w = ("step" / W)^3$ 的 warmup 慢慢拉起来
-- 模型输入沿通道维 concat：$[z_t\ "3ch",\ "DSP artifact STFT"\ "3ch",\ "mask"\ "1ch"]$，artifact 通道在 unmasked 帧填零，mask=1 表示该帧需要修复
+- 模型输入沿通道维 concat：$[z_t "3ch", "DSP artifact STFT" "3ch", "mask" "1ch"]$，artifact 通道在 unmasked 帧填零，mask=1 表示该帧需要修复
 - DSP transition 边界（pitch envelope 拐点附近）的帧给到 4× 权重，因为这一段幅度也被 DSP 破坏得最厉害
 
 为了让模型学到"输入已经是好的就不要改"，5% 的样本强制 artifact = clean（identity 样本），mask 仍然正常采样。
