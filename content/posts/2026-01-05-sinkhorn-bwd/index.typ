@@ -5,7 +5,7 @@
 )
 
 #let diag = math.op("diag")
-#let pdv(y, x) = $(diff #y) / (diff #x)$
+#let pdv(y, x) = $(partial #y) / (partial #x)$
 
 == 问题设定
 
@@ -24,11 +24,11 @@ $L$ 对 $X$ 的梯度：$pdv(L, X)$。
 
 通过使用CG方法求解下列方程：
 
-$ mat(I, R; R^T, I) mat(u; v) = mat((G dot.circle R) 1; (G dot.circle R)^T 1) $
+$ mat(I, R; R^T, I) mat(u; v) = mat((G dot.o R) 1; (G dot.o R)^T 1) $
 
 可以得到 $L$ 对 $X$ 的梯度：
 
-$ nabla_X L = (G - u 1^T - 1 v^T) dot.circle R $
+$ nabla_X L = (G - u 1^T - 1 v^T) dot.o R $
 
 == 求解
 
@@ -36,7 +36,7 @@ $ nabla_X L = (G - u 1^T - 1 v^T) dot.circle R $
 
 将上述方程改写成矩阵形式：
 
-$ mat(I, R; R^T, I) mat(u; v) = mat((G dot.circle R) 1; (G dot.circle R)^T 1) = b_0 $
+$ mat(I, R; R^T, I) mat(u; v) = mat((G dot.o R) 1; (G dot.o R)^T 1) = b_0 $
 
 === 组装梯度
 
@@ -92,7 +92,7 @@ $ v = tilde(v) $
 $ M_(i j) = u_i + v_j $
 
 6. *最终梯度*
-$ nabla_X L = (G - M) dot.circle R $
+$ nabla_X L = (G - M) dot.o R $
 
 == PyTorch 实现
 
