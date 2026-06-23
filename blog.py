@@ -1005,7 +1005,8 @@ class _ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
 class RebuildHandler:
     """监视源文件变化并触发增量构建，构建完成后通过 SSE 通知浏览器刷新。"""
 
-    def __init__(self, reload_bus: "_ReloadBus | None" = None, debounce_seconds: float = 0.5):
+    def __init__(self, port, reload_bus: "_ReloadBus | None" = None, debounce_seconds: float = 0.5):
+        self.port = port
         self.debounce = debounce_seconds
         self._last_build = 0.0
         self._lock = threading.Lock()
@@ -1051,7 +1052,8 @@ class RebuildHandler:
             build()
             if self.reload_bus is not None:
                 self.reload_bus.broadcast("reload")
-            print("🔄 构建完成，浏览器已自动刷新。\n")
+            print("🔄 构建完成，浏览器已自动刷新。")
+            print(f"🚀 http://localhost:{self.port}\n")
         except Exception as e:
             print(f"❌ 自动构建失败: {e}\n")
 
@@ -1086,7 +1088,7 @@ def preview(port: int = 8000, open_browser_flag: bool = True) -> bool:
         print("  ❌ 未安装 watchdog。请运行 uv add watchdog 安装。")
         return False
 
-    handler = RebuildHandler(reload_bus=reload_bus)
+    handler = RebuildHandler(port=port, reload_bus=reload_bus)
     observer = Observer()
     watch_paths = [CONTENT_DIR, CONFIG_FILE, Path("tufted-lib"), ASSETS_DIR]
     for path in watch_paths:
@@ -1464,11 +1466,7 @@ def cmd_new() -> bool:
     列出所有可用的分类目录，让用户选择分类并输入标题。
     """
     # 列出所有可用的分类目录
-    sections = [
-        d.name
-        for d in sorted(CONTENT_DIR.iterdir())
-        if d.is_dir() and not d.name.startswith("_")
-    ]
+    sections = [d.name for d in sorted(CONTENT_DIR.iterdir()) if d.is_dir() and not d.name.startswith("_")]
     if not sections:
         print("❌ content/ 下没有可用的分类目录。")
         return False
