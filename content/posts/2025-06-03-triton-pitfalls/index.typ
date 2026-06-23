@@ -1,7 +1,7 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Triton Common Pitfalls",
-  date: datetime(year: 2025, month: 10, day: 2),
+  date: datetime(year: 2025, month: 9, day: 4),
   lang: "en",
 )
 

@@ -1,13 +1,13 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "SnapViewer Devlog #3: Optimizations",
-  date: datetime(year: 2025, month: 10, day: 2),
+  date: datetime(year: 2025, month: 6, day: 7),
   lang: "en",
 )
 
 *Intro: Troubleshooting Memory and Speed Performance*
 
-**Disclaimer:** I develop and test primarily on Windows using the latest stable Rust toolchain and CPython 3.13.
+*Disclaimer:* I develop and test primarily on Windows using the latest stable Rust toolchain and CPython 3.13.
 
 == 1. Background and Motivation
 
@@ -28,8 +28,8 @@ I decomposed the data-loading pipeline:
 
 === Eliminating Redundant Clones
 
-- **First attempt:** switch from `Vec<T>` to `&[T]`. Failed due to lifetimes.
-- **Final solution:** use `Arc<[T]>`. No significant overhead observed.
+- *First attempt:* switch from `Vec<T>` to `&[T]`. Failed due to lifetimes.
+- *Final solution:* use `Arc<[T]>`. No significant overhead observed.
 
 === Early Deallocation of Intermediate Structures
 
@@ -46,8 +46,8 @@ Peak memory dropped by roughly one-third.
 == 4. Redesigning the Snapshot Format
 
 I split the snapshot into two files:
-- **allocations.json:** lightweight JSON with timestamps and sizes.
-- **elements.db:** SQLite database holding call-stack text.
+- *allocations.json:* lightweight JSON with timestamps and sizes.
+- *elements.db:* SQLite database holding call-stack text.
 
 At runtime:
 - Load `allocations.json` into memory.

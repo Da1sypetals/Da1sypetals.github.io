@@ -1,7 +1,7 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "Snapviewer Devlog #2: UI",
-  date: datetime(year: 2025, month: 10, day: 2),
+  date: datetime(year: 2025, month: 6, day: 3),
   lang: "en",
 )
 
@@ -10,9 +10,9 @@
 == The Initial Vision
 
 My core requirements:
-- **Interactive Display:** When an allocation is clicked, display its size, call stack, etc.
-- **SQL REPL:** Execute SQL queries against the underlying database.
-- **Non-Blocking Operations.**
+- *Interactive Display:* When an allocation is clicked, display its size, call stack, etc.
+- *SQL REPL:* Execute SQL queries against the underlying database.
+- *Non-Blocking Operations.*
 
 == Early Attempts and Roadblocks
 
@@ -22,9 +22,9 @@ Hit a wall with library versioning issues. Pivoted.
 
 === TUI: Terminal User Interface
 
-**Ratatui:** Got demos running, but finding an open-source example matching my layout failed.
+*Ratatui:* Got demos running, but finding an open-source example matching my layout failed.
 
-**Textual & AI-Powered Development:**
+*Textual & AI-Powered Development:*
 I fed my requirements to several LLMs. Claude's initial results were impressive. After refinement, I had a working TUI demo.
 
 == Combining Rust and Python
@@ -34,8 +34,8 @@ I used PyO3 to expose Rust structures and bind functions to Python.
 === Designing App Structure
 
 My initial idea:
-- **Main Thread:** Renders the TUI and accepts REPL inputs.
-- **Spawned Thread:** Runs the infinite loop for the Snapshot Viewer.
+- *Main Thread:* Renders the TUI and accepts REPL inputs.
+- *Spawned Thread:* Runs the infinite loop for the Snapshot Viewer.
 
 However, `winit` requires the window to run on the main thread.
 

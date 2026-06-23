@@ -1,7 +1,7 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "SnapViewer: Faster PyTorch Memory Allocation Viewer",
-  date: datetime(year: 2025, month: 10, day: 1),
+  date: datetime(year: 2025, month: 5, day: 20),
   lang: "en",
 )
 
