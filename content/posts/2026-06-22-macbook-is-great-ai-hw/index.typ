@@ -18,3 +18,6 @@
 - 装一个基于RVC的变声器，就可以直接用自己的声音来prototype歌曲的男女合唱or和声。
 
 另一个优势是苹果的GPU有很方便的编程接口MLX，再加上现在强大的Coding Agent，如果深度学习模型我感觉可以集成到我的日常生活中，可以直接让Coding Agent把PyTorch翻译成MLX Python，甚至是翻译成MLX C，然后直接做一个app或者接入到已有的app里面（任何语言都应该需要可以interop with C），然后我们就可以稳定使用这个模型的能力了！拜LLM所赐，不好商业化的开源前沿研究成果，也可以快速被广泛地应用。
+
+#figure(image("source-sep.png"), caption: "音频深度学习推理")
+#figure(image("orchid-use.gif"), caption: "离线OCR软件")
