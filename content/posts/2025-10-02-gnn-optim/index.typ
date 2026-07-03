@@ -96,3 +96,6 @@ out = dglsp.bspmm(attn, v)
 #figure(image("2025-10-02-19-52-13.png"))
 
 速度达到DGL实现的3x(相对稀疏) 到5x (相对稠密）。
+
+
+_2026.6.30：最终本科毕设做了这个问题的改进，和agent合作在极稀疏的mesh图在h20上实现了sota。不过在agentic kernel optimization方案层出不穷的今天其实也没有意义了，属于是一个做出来就立刻过时了的工作。_
