@@ -3,7 +3,7 @@
 #let template = tufted.tufted-web.with(
   header-links: (
     "/posts/": "知识",
-    "/art/": "文化",
+    "/art/": "文艺",
     "/documents/": "文档",
     "/llm-chats/": "精选LLM对话",
     "/": "About",
