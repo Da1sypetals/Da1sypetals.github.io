@@ -9,6 +9,8 @@
 苹果终于在WWDC26推出了text-based的GPU profiler。此前所有的GPU性能数据都必须在GUI上查看，因为苹果的.gputrace是一个闭源格式，必须用闭源软件 Instruments 才能查看。
 
 在2025年及以前这当然是最方便的，那时候还没有能稳定调用工具的LLM Agent；但是现在大家已经不太会写代码了，绝大多数分析都丢给AI写了，然而并不是所有模型都有多模态，往往只有那些总参数量足够大的模型才会有质量好的多模态，因此让Agent读GUI实际上是低效且不现实的事情。好在今年终于随着Xcode 27推出了新的text-based GPU profiler工具：`gpudebug`。
+- https://developer.apple.com/documentation/xcode/investigating-gpu-issues-with-ai-agents
+- https://developer.apple.com/documentation/xcode/debugging-with-interactive-command-line-tools
 
 text-based CLI工具的最大优点就是Agent可以自主调用、自主分析工具输出，就形成了profile -> 优化 -> profile again的最基本的PGO闭环。借鉴现在已经大量存在的基于`nsys`, `ncu`的在NVIDIA平台上优化深度学习系统和算子的Agent，我们也可以用一段简单的prompt让Agent开始PGO的工作。
 
