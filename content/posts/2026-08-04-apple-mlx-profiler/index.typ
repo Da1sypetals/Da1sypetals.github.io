@@ -63,6 +63,10 @@ man gpucapture
 下面是一个跑了大约1h的优化任务，优化了一个音频Vocoder神经网络的运行效率。优化前的代码是一个他自己在几天前从PyTorch 1:1 移植到MLX（Rust）的代码。
 #image("./opt.png")
 
+转换的生成的歌声（我和AI合唱，经过了混音）：
+
+#html.video(width: 400, src: "feitian.mp4")
+
 使用的Agent是Codex，模型是GPT 5.6 Sol，可以看到效率和效果还是非常好的。在Amdahl's Law的指导下，对于整个系统来说，这个网络进一步优化已经没有多大的意义了，就没有让Agent继续进行下去了。
 
 这确实开放了大量实用中小型神经网络在MacOS上部署的机会！在AI时代脑子感觉被驴踢了的苹果终于知道对的事情是什么了。在做“让自己的操作系统更容易被Agent使用”这件事上，在MacOS上做，终究还是比Windows Powershell那种Agent至今还会犯删C盘的垃圾系统好做的。
