@@ -11,7 +11,12 @@ import sys
 import threading
 import time
 import urllib.parse
+import readline
+import locale
 from dataclasses import dataclass
+
+# 激活系统 locale（UTF-8），使 readline 按字符边界而非字节处理中文退格等行编辑
+locale.setlocale(locale.LC_ALL, "")
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
@@ -1446,19 +1451,6 @@ def build_section_indices() -> bool:
 # ============================================================================
 
 
-def slugify(title: str) -> str:
-    """
-    将标题转换为 slug（用于目录名）。
-
-    规则：小写 + 空格/下划线替换为短划线；仅保留 [a-z0-9\u4e00-\u9fff-] 字符。
-    """
-    s = title.strip().lower()
-    s = re.sub(r"[\s_]+", "-", s)
-    s = re.sub(r"[^a-z0-9\u4e00-\u9fff-]", "", s)
-    s = re.sub(r"-+", "-", s).strip("-")
-    return s
-
-
 def cmd_new() -> bool:
     """
     交互式新建一篇文章。
@@ -1492,7 +1484,22 @@ def cmd_new() -> bool:
             print("\n取消")
             return False
 
-    # 输入标题
+    # 输入 slug（用于目录名等，不依赖标题）
+    while True:
+        try:
+            slug_input = input("请输入文章 slug（用于目录名，仅限小写字母/数字/短划线）: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\n取消")
+            return False
+        if not slug_input:
+            print("  ⚠ slug 不能为空")
+            continue
+        if not re.fullmatch(r"[a-z0-9-]+", slug_input):
+            print("  ⚠ slug 只能包含小写字母、数字和短划线")
+            continue
+        break
+
+    # 输入标题（仅用于 Typst 正文标题）
     while True:
         try:
             title = input("请输入文章标题: ").strip()
@@ -1506,13 +1513,8 @@ def cmd_new() -> bool:
 
     section_dir = CONTENT_DIR / section
 
-    slug_body = slugify(title)
-    if not slug_body:
-        print(f"❌ 无法从标题生成有效 slug: {title!r}")
-        return False
-
     today = datetime.now()
-    slug = f"{today:%Y-%m-%d}-{slug_body}"
+    slug = f"{today:%Y-%m-%d}-{slug_input}"
     article_dir = section_dir / slug
     if article_dir.exists():
         print(f"❌ 目标目录已存在: {article_dir}")
