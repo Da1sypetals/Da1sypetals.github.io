@@ -12,7 +12,7 @@
 - https://developer.apple.com/documentation/xcode/investigating-gpu-issues-with-ai-agents
 - https://developer.apple.com/documentation/xcode/debugging-with-interactive-command-line-tools
 
-text-based CLI工具的最大优点就是Agent可以自主调用、自主分析工具输出，就形成了profile -> 优化 -> profile again的最基本的PGO闭环。借鉴现在已经大量存在的基于`nsys`, `ncu`的在NVIDIA平台上优化深度学习系统和算子的Agent，我们也可以用一段简单的prompt让Agent开始PGO的工作。
+越来越多的证据表明，使用具有丰富反馈的工具链（Typescript/Rust编译器、nsys/ncu）能大幅提高Agent的工作效率和能力。text-based CLI工具的最大优点就是Agent可以自主调用、自主分析工具输出，就形成了profile -> 优化 -> profile again的最基本的PGO闭环。借鉴现在已经大量存在的基于`nsys`, `ncu`的在NVIDIA平台上优化深度学习系统和算子的Agent，我们也可以用一段简单的prompt让Agent开始PGO的工作。
 
 下面这段prompt并没有设定很严格的工作流程和标准，因此你可能需要一个足够强的LLM。你还需要一个示例输入用来喂给你需要优化的那个系统。
 
