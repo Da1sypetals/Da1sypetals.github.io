@@ -11,12 +11,7 @@ import sys
 import threading
 import time
 import urllib.parse
-import readline
-import locale
 from dataclasses import dataclass
-
-# 激活系统 locale（UTF-8），使 readline 按字符边界而非字节处理中文退格等行编辑
-locale.setlocale(locale.LC_ALL, "")
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
