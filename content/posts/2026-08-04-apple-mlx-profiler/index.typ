@@ -61,11 +61,9 @@ man gpucapture
 使用`gputrace`需要Xcode 27和*MacOS 27 Golden Gate*。工具链和系统都需要升级到最新版本，在2026年8月4日，MacOS 27还处于beta。
 
 下面是一个跑了大约1h的优化任务，优化了一个音频Vocoder神经网络的运行效率。使用的Agent是Codex，模型是GPT 5.6 Sol，优化前的代码是一个他自己在几天前从PyTorch 1:1 移植到MLX（Rust）的代码。
-#image("./opt.png")
-
-转换的生成的歌声（我和AI合唱，经过了混音）：
-
-#html.video(width: 400, src: "feitian.mp4")
+- #link("https://pages.petals.top/pages/3343eaf2-cd03-4b3f-be17-815d156c7af1", "整个优化的session在这里")
+- 优化结果：#image("./opt.png")
+- 转换的生成的歌声（我和AI合唱，经过了混音）：#html.video(width: 400, src: "feitian.mp4")
 
 可以看到效率和效果还是非常好的。在Amdahl's Law的指导下，对于整个系统来说，这个网络进一步优化已经没有多大的意义了，就没有让Agent继续进行下去了。
 
