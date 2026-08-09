@@ -1058,7 +1058,7 @@ class RebuildHandler:
             print(f"❌ 自动构建失败: {e}\n")
 
 
-def preview(port: int = 8000, open_browser_flag: bool = True) -> bool:
+def preview(port: int = 8922, open_browser_flag: bool = True) -> bool:
     """
     启动本地预览服务器：
     - 自给自足的 HTTP server（不依赖 livereload / uvx）
@@ -1066,9 +1066,8 @@ def preview(port: int = 8000, open_browser_flag: bool = True) -> bool:
     - 通过 SSE + 注入脚本实现保存即刷新
     - watchdog 监视源文件变化 → 自动增量构建 → 推送 reload 事件
     """
-    if not SITE_DIR.exists():
-        print(f"  ⚠ 输出目录 {SITE_DIR} 不存在，请先运行 build 命令。")
-        return False
+    print("🚀 启动预览前先构建一次...")
+    build()
 
     reload_bus = _ReloadBus()
 
@@ -1607,7 +1606,7 @@ def create_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("clean", help="清理生成的文件")
 
     preview_parser = subparsers.add_parser("preview", help="启动本地预览服务器")
-    preview_parser.add_argument("-p", "--port", type=int, default=8000, help="服务器端口号（默认: 8000）")
+    preview_parser.add_argument("-p", "--port", type=int, default=8922, help="服务器端口号（默认: 8922）")
     preview_parser.add_argument(
         "--no-open", action="store_false", dest="open_browser", help="不自动打开浏览器"
     )
@@ -1649,7 +1648,7 @@ if __name__ == "__main__":
         case "clean":
             success = clean()
         case "preview":
-            success = preview(getattr(args, "port", 8000))
+            success = preview(getattr(args, "port", 8922))
         case "new":
             success = cmd_new()
         case _:
