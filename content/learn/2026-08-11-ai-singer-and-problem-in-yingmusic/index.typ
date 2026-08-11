@@ -119,7 +119,7 @@ Zero-shot这个方向就能找到近至四五个月之前的很前沿的开源�
 + 一种免训练的方案：
   + 先试用Pupu-Vocoder合成波形
   + 然后提取HiFiGAN格式的Mel，再使用PC-NSF-HiFiGAN使用explicit f0 condition重新合成。
-  经过实验，这种方法是效果最好的，断音数量大幅减少，而且由于Pupu-Vocoder的参数两非常大，导致实际上二次分析的音频质量和PC-NSF-HiFiGAN的生成质量没有可以感知的差别。
+  经过实验，这种方法是效果最好的，断音数量大幅减少，而且由于Pupu-Vocoder的参数量非常大，导致实际上二次分析的音频质量和PC-NSF-HiFiGAN的生成质量没有可以感知的差别。
 
 最终敲定了方案4，并让AI将所有模型的推理移植到了Metal平台，并使用Rust实现以避免对Python的依赖。最终架构如图所示：
 
