@@ -141,6 +141,6 @@ Zero-shot这个方向就能找到近至四五个月之前的很前沿的开源�
 === Source-Filter理论、NSF架构
 
 后来查阅资料后发现，BigVGAN的不足很可能是没有使用NSF的架构，而Pupu-Vocoder和PC-NSF-HiFiGAN都使用了这个架构。试听了大量vocoder的横评之后我认为这个猜想是合理的。
-- source-filter理论指出，人的声音是由source部分和filter部分组成，source部分产生基频震荡和多级谐波，然后这个信号被输入filter被，由filter对声源进行共振塑形。
-- NSF将这个理论应用于架构上，explicit地分离出source和filter并且用NN建模这两个组件。
+- source-filter理论指出，人的声音是由source部分和filter部分组成，source（声源）部分产生基频震荡和多级谐波，然后由filter对声源进行共振塑形。
+- NSF将这个理论应用于架构上，explicit地分离出source和filter并且用数学/NN的方式建模这两个组件。
 - 这其实相当于对网络架构加上了额外的inductive bias。虽然现在大家每天都在强调 #link("http://www.incompleteideas.net/IncIdeas/BitterLesson.html", "the bitter lesson")，但是由于歌声领域的数据是严重不足的#footnote[绝大多数流媒体平台的歌声都是被以混音的形式放出，无法用于训练；而能用于训练的高质量数据是干音，这是需要在安静的家中或者录音棚，用一个音质至少良好的麦克风进行录制的。同时，雇人录制/获取干音也有一定人力成本，而由于没有明确的收益，没有什么实验室/公司有动力去做这件事。]，如果一个inductive bias能够显著加速模型学习，或者改善模型在少数据训练下的输出质量（比如这里，对于一个长音保持f0的稳定），是应该积极采用的。
