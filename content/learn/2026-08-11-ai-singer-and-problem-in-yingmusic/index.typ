@@ -110,7 +110,7 @@ Zero-shot这个方向就能找到近至四五个月之前的很前沿的开源�
   - 实际上没啥用，也可能是数据太少，但是后来一想觉得数据量多了也没啥用，transformer里面已经加了RoPE了应当能辨识位置信息
 + 换成使用带有explicit f0输入的vocoder（PC-NSF-HiFiGAN）
   - 断音的地方从Mel-spectrogram可以看到能量偏移了f0，考虑可能引入explicit f0可以在mel->waveform的步骤缓解这个问题
-  - 需要微调主模型，因为PC-NSF-HiFiGAN使用的mel-spectrogram的配置和原本的BigVGAN相同
+  - 需要微调主模型，因为PC-NSF-HiFiGAN使用的mel-spectrogram的配置和原本的BigVGAN不同
   - 用我有限的数据进行微调之后效果不尽如人意，比较嘶哑；
   - 这个方案还有其他变体：
     + 给当前SOTA的Vocoder添加上explicit f0输入，但是这个也需要重新训练Vocoder；
