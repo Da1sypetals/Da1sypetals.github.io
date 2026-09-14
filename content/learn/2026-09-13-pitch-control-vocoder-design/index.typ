@@ -19,8 +19,8 @@ TODO
 #let fe = $F_e$
 初步设想中，这个系统由两个模型组成：encoder和f0 discriminator。
 - encoder模型负责从mel中提取出#f0 无关的features，以“让#df0 无法从features里面提取出任何 #f0 信息”为优化目标；
-- f0 discriminator#df0 从这个features里面尝试提取#f0，以“从#fe 中提取出#f0”为目标来优化#df0 为优化目标。
-通过这两个模型之间的对抗，达到让encoder features不含#f0 信息的目标。
+- f0 discriminator#df0 从这个features里面尝试提取#f0，以“从features中提取出#f0”为目标来优化#df0 为优化目标。
+通过这两个模型之间的对抗，希望达到让encoder features不含#f0 信息的目标。
 
 === 如何定义“无法提取出任何 #f0 信息”
 #f0 是一个标量，所以最自然的方法是把检测f0定义为一个回归问题。但是现代#f0 检测模型（RMVPE，FCPE）都不约而同地把f0检测定义为一个分类问题：把人类发声的可能f0按照一个公差进行等差数列分桶，每一个桶就是一个类别。
