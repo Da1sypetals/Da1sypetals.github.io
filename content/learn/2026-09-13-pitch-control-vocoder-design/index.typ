@@ -51,7 +51,7 @@ TODO
 - *Muon优化器是否适用。*使用用Moonlight版本的Muon并match AdamW update RMS@kexuefm-11416，经过控制变量实验，Muon优化器在#df0 不适用，而应用于Encoder和Decoder部分虽然可以带来更加平滑的loss曲线，但是最终结果并没有可感知的提升（音频模型目前最可靠的评估方式还是用耳朵听...），因而弃用。
 - *是否需要使用VAE式的KL Loss进行latent regularization。*经过实验，使用VAE代替AE ($beta in {10^(-4), 10^(-5), 10^(-6)}$)，效果没有得到提升，反而造成了更严重的电音。暂时怀疑是引入的$epsilon$所导致；虽然无法在vocoder架构下确认这一点，但是至少提供了_普通Autoencoder效果不会太差_的线索。
 
-网络结构是一个ConvNeXt架构@convnext 的非压缩式Autoencoder；#df0 部分则是直接照抄了FCPE@fcpe 的模型架构。
+网络结构是一个ConvNeXt架构@convnext 的非压缩式Autoencoder，总参数大约100M；#df0 部分则是直接照抄了FCPE@fcpe 的模型架构。
 
 
 == 端到端Vocoder
