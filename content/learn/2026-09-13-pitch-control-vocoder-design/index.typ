@@ -4,7 +4,7 @@
   date: datetime(year: 2026, month: 9, day: 25),
 )
 
-_AI声明：本项目由Kimi K3，Devin SWE 2（研究讨论）和DeepSeek V4.1 Flash（运维）协助完成。其中Kimi K3通过Cursor调用，其基础设施提供商位于美国，不存在被路由到Claude等其他模型的可能性。_
+_AI声明：本项目由Kimi K3, Devin SWE-2,Claude Opus 5.5, Claude Sonnet 5.5, DeepSeek V4.1 Flash协助完成。_
 
 == 简介
 
@@ -81,7 +81,7 @@ S-F理论过于简化的模型与严格的线性卷积限制限制了合成的�
 - 与传统模型不同，Source和Filter*均*分别输入encoder features和#f0，两个网络的功能主要从网络架构的Inductive Bias和条件的注入方式进行区分。
 
 
-=== Vocoder结构
+=== 初步设计
 
 架构基于前面的Autoencoder设计，主要改动是将Decoder换成S-F架构的Vocoder，并且加上波形生成的对抗Loss。
 #image("./vocoder.png")
@@ -119,10 +119,52 @@ class VocoderGenerator(nn.Module):
         )
 ```
 
-=== 训练
-TODO
+=== 失败的尝试：循环训练
 
-=== 效果展示
+=== 解决问题
+
+==== 意外的信息泄露
+
+输入feature泄露了：
+- f0
+- 相位
+措施：
+- 把WORLD在f0 D之后注入改为之前注入；最后移除了WORLD features，发现WORLD features其实不是必要的。最终决定移除。
+
+TODO：details
+
+==== y0 支路
+
+发现y0支路在level 0,1 尤其是0的能量很大盖过了其他成分，以至于TODO；而在level二、三、四，它们能量又非常小。移除y0
+
+
+==== Source能量不足，高频噪声化，等等
+
+发现source的能量比y0的能量低3~6dB；并且输入音频出现了严重的高频噪声化，经过排查怀疑是source预测的噪声和谐波的配比不当导致噪声太大，盖过了神经网络预测出来的谐波。
+方案是直接把噪声和配比的两个支路给去掉，只保留Oscillator加简单的卷积网络，然后对卷积网络采用weight norm的方式保证输出的能量。
+
+
+==== 性能优化
+
+训练太慢了。第一版实现出来之后，只能跑Batch size等于4（每一张卡的Batch size，总batch size还应该乘以卡数4）。为了扩大Batch size，我把Gradient checkpointing在部分模块里开起来之后，Batch size可以达到32，但是这导致训练的速度非常慢，达到了大约15秒/step。
+
+因为我买了devin pro送了不限量的SWE-2，就打算物尽其用一下，来好好优化一下训练速度。实际的工作就是让Agent用Torch Profiler和Nsys对稳定的几个训练step进行profile，然后让他汇报其中的冗余点和热点，再手动选择几个，让他尝试去优化，或者根本就不需要人为介入，直接让他自己去优化。事实上，他一开始找出来的很多问题都是本该在最开始写代码的时候避免的，包括本来可以在一次通信里面传输的参数，使用了冗余的多次通信、有一部分前向的结果可以保留下来让后续步骤直接复用、多个Discriminator的输入可以合并成Batch，等等。
+
+在agent尝试了torch.compile（不采用，编译太久、提速有限，而且在某些步骤会意外的产生多余的activation存储导致OOM），cuDNN benchmark（采用）之后，step耗时来到9s。至此在系统层级，低垂的果实基本上都被摘完了，训练的主要瓶颈也转移到了算子的启动和执行上。
+
+由于这个模型里面有大量的pointwise/elementwise的计算，因此部分算子还是很方便agent使用triton编写的。例如，通过将ADAASnakeBeta的forward/backward以及Downsample/Upsample进行算子融合及自动调参，Generator的forward速度提升到3.1x，step耗时也降低到8s。经过了更多更加激进的融合之后，step耗时从9s降低到约4.3s。
+
+但是我发现有许多算子仍然是非标的（没有被cuDNN或者Flash Attention等高性能库好好调优过），有很大的优化空间。刚好想到一个最近还没来得及去试的算子自动优化框架#link("https://github.com/mlc-ai/TIRx-harness", "TIRx harness")，就拿来尝试优化一下。Setup这个框架是一个比较让人晕头转向的事情，因为在其中存在着一些unknown unknown，也就是你不明白Agent是否到底理解你的意思，朝着你想要的方向进行优化。但是在把这些问题都追问好之后，让他开始工作（并且准备好足够的token），就能产出非常惊人的结果。最终，稳态step耗时被进一步降低到2.1s。
+
+
+
+
+
+
+
+
+
+== 效果展示
 TODO
 
 
