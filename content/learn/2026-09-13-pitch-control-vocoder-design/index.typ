@@ -1,7 +1,7 @@
 #import "/config.typ": template, tufted
 #show: template.with(
   title: "设计一个可以控制音高的Vocoder",
-  date: datetime(year: 2026, month: 9, day: 25),
+  date: datetime(year: 2026, month: 10, day: 25),
 )
 
 _AI声明：本项目由Kimi K3, Devin SWE-2,Claude Opus 5.5, Claude Sonnet 5.5, DeepSeek V4.1 Flash协助完成。_
@@ -157,9 +157,10 @@ TODO：details
 但是我发现有许多算子仍然是非标的（没有被cuDNN或者Flash Attention等高性能库好好调优过），且没有被。刚好想到一个最近还没来得及去试的算子自动优化框架#link("https://github.com/mlc-ai/TIRx-harness", "TIRx harness")，就拿来尝试优化一下。Setup这个框架是一个比较让人晕头转向的事情，因为在其中存在着一些unknown unknown，也就是你不明白Agent是否到底理解你的意思，朝着你想要的方向进行优化。但是在把这些问题都追问好之后，让他开始工作（并且准备好足够的token），就能产出非常惊人的结果。最终，稳态step耗时被进一步降低到2.1s。
 
 在这个过程中还探索了一下Agentic Kernel Optimization的正确使用姿势，目前看下来：
-- 最好整个框架还是需要自己亲手搭起来，不要直接套用别人的框架，需要把框架搭起来才能对Agent在这个框架里面的行为有十足的把握
+- 最好整个框架还是需要自己亲手搭起来，需要把框架搭起来才能对Agent在这个框架里面的行为有十足的把握。如果直接使用别人的框架的话，这种框架里面一般都有大量的文档，而且文档里面90%的文字都可能是AI生成的。阅读AI生成的文字是很累的，而且回报也是一个不确定数，有可能你想做的事情和它的流程根本就搭不上。因此我认为不如直接自己先把目标给Agent，然后和Agent从野蛮生长期共同跑出一轮你认为合适的流程。
 - 之前有很多框架是以复用代码为优先的，尤其是Benchmark部分、正确性测试部分。但是据我的观察，由于现在生成代码这件事已经不再是瓶颈，因此我觉得_写一个足够详尽的prompt让Agent自己去注意到进行Benchmark和正确性测试之中可能会出现的Hack_，这个做法会更符合现状。
 - 确认tolerance(mean/max absolute difference)不是一件容易的事情。我想出来的一个方法是，可以用不同的方式，比如说用初步优化的Triton和最naive的PyTorch实现进行对比可以拿到一个合理差异的数量级，把这个值大概乘个4\~5倍，可以作为初步的tolerance；另外需要让Agent在正确性测试失败的时候，去看一下是否可能是tolerance设置的太紧，并且自适应做出调整。
+后续我应该会再写一篇文章，讨论一下我是如何使用Agentic Kernel Optimization的。
 
 
 
