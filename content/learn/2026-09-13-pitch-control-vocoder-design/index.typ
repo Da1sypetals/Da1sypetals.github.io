@@ -1,10 +1,10 @@
 #import "/config.typ": template, tufted
 #show: template.with(
-  title: "设计一个可以控制音高的Vocoder",
+  title: "设计一个稳定的、可以控制音高的Vocoder(draft)",
   date: datetime(year: 2026, month: 10, day: 25),
 )
 
-_AI声明：本项目由Kimi K3, Devin SWE-2,Claude Opus 5.5, Claude Sonnet 5.5, DeepSeek V4.1 Flash协助完成。_
+_AI声明：本项目由Kimi K3, Devin SWE-2, Claude Opus 5.5, Claude Sonnet 5.5, DeepSeek V4.1 Flash协助完成。_
 
 == 简介
 
